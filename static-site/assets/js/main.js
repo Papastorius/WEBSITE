@@ -129,7 +129,7 @@ const cameraViewsMobile = {
 		rotation: { x: 0, y: 0, z: 0 },
 	},
 	'page-bio': {
-		position: { x: -25, y: 25, z: 32 },
+		position: { x: -33, y: 25, z: 32 },
 		rotation: { x: 0, y: 1.5, z: 0 },
 	},
 	'page-projets': {
