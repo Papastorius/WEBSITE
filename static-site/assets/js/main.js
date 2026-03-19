@@ -129,7 +129,7 @@ const cameraViewsMobile = {
 		rotation: { x: 0, y: 0, z: 0 },
 	},
 	'page-bio': {
-		position: { x: -38, y: 25, z: 32 },
+		position: { x: -25, y: 25, z: 32 },
 		rotation: { x: 0, y: 1.5, z: 0 },
 	},
 	'page-projets': {
@@ -2217,4 +2217,112 @@ function animate() {
 	cssRenderer.render(cssScene, camera);
 }
 
+function initCameraDebug() {
+	if (!new URLSearchParams(location.search).has('debug')) return;
+
+	const views = cameraViewsMobile;
+	const axes = [
+		{ key: 'x',    target: 'position', min: -80,  max: 80,  step: 0.5  },
+		{ key: 'y',    target: 'position', min: -40,  max: 80,  step: 0.5  },
+		{ key: 'z',    target: 'position', min: -80,  max: 80,  step: 0.5  },
+		{ key: 'rotY', target: 'rotation', min: -3.2, max: 3.2, step: 0.01 },
+	];
+
+	const panel = document.createElement('div');
+	panel.style.cssText = `
+		position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+		background: rgba(0,0,0,0.88); color: #fff; font-family: monospace;
+		font-size: 13px; padding: 12px 16px; border-radius: 8px;
+		border: 1px solid #555; z-index: 9999; width: 310px;
+	`;
+
+	const title = document.createElement('div');
+	title.style.cssText = 'color:#d72638; margin-bottom:10px; font-size:12px;';
+	panel.appendChild(title);
+
+	const sliders = {};
+	const valEls = {};
+
+	axes.forEach(({ key, min, max, step }) => {
+		const row = document.createElement('div');
+		row.style.cssText = 'display:flex; align-items:center; gap:8px; margin-bottom:6px;';
+
+		const lbl = document.createElement('span');
+		lbl.style.cssText = 'width:40px; color:#aaa;';
+		lbl.textContent = key;
+
+		const slider = document.createElement('input');
+		slider.type = 'range';
+		slider.min = min; slider.max = max; slider.step = step;
+		slider.style.cssText = 'flex:1; accent-color:#d72638;';
+		sliders[key] = slider;
+
+		const val = document.createElement('span');
+		val.style.cssText = 'width:46px; text-align:right; color:#d72638;';
+		valEls[key] = val;
+
+		slider.addEventListener('input', () => {
+			const v = parseFloat(slider.value);
+			val.textContent = v.toFixed(2);
+			const view = views[activePageId];
+			if (!view) return;
+			if (key === 'rotY') {
+				view.rotation.y = v;
+				camera.rotation.y = v;
+				controls.syncFromCamera();
+			} else {
+				view.position[key] = v;
+				camera.position[key] = v;
+			}
+		});
+
+		row.append(lbl, slider, val);
+		panel.appendChild(row);
+	});
+
+	const copyBtn = document.createElement('button');
+	copyBtn.textContent = 'Copier les valeurs';
+	copyBtn.style.cssText = `
+		margin-top:8px; width:100%; padding:7px; background:#d72638;
+		color:#fff; border:none; border-radius:4px; font-family:monospace;
+		font-size:12px; cursor:pointer;
+	`;
+	copyBtn.addEventListener('click', () => {
+		const view = views[activePageId];
+		if (!view) return;
+		const { x, y, z } = view.position;
+		const ry = view.rotation.y;
+		const txt = `'${activePageId}': {\n\tposition: { x: ${x}, y: ${y}, z: ${z} },\n\trotation: { x: 0, y: ${ry.toFixed(2)}, z: 0 },\n},`;
+		navigator.clipboard?.writeText(txt).then(() => {
+			copyBtn.textContent = 'Copié !';
+			setTimeout(() => (copyBtn.textContent = 'Copier les valeurs'), 1500);
+		});
+	});
+	panel.appendChild(copyBtn);
+	document.body.appendChild(panel);
+
+	// Sync sliders quand la page active change
+	let lastPage = null;
+	const sync = () => {
+		if (activePageId !== lastPage) {
+			lastPage = activePageId;
+			title.textContent = '📷 ' + activePageId;
+			const view = views[activePageId];
+			if (view) {
+				sliders.x.value    = view.position.x;
+				sliders.y.value    = view.position.y;
+				sliders.z.value    = view.position.z;
+				sliders.rotY.value = view.rotation.y;
+				valEls.x.textContent    = view.position.x.toFixed(2);
+				valEls.y.textContent    = view.position.y.toFixed(2);
+				valEls.z.textContent    = view.position.z.toFixed(2);
+				valEls.rotY.textContent = view.rotation.y.toFixed(2);
+			}
+		}
+		requestAnimationFrame(sync);
+	};
+	sync();
+}
+
 await bootstrap();
+initCameraDebug();
