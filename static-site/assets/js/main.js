@@ -2233,7 +2233,7 @@ function initCameraDebug() {
 		position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
 		background: rgba(0,0,0,0.88); color: #fff; font-family: monospace;
 		font-size: 13px; padding: 12px 16px; border-radius: 8px;
-		border: 1px solid #555; z-index: 9999; width: 600px;
+		border: 1px solid #555; z-index: 9999; width: 310px;
 	`;
 
 	const title = document.createElement('div');
