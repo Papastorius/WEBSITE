@@ -1,0 +1,24 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.idea/
+.vscode/
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Frontend dependencies and build outputs
+node_modules/
+dist/
+build/
+out/
+coverage/
+.cache/
+.parcel-cache/
+.sass-cache/

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Louis Navarro — Contrebassiste, créateur numérique">
+	<meta name="theme-color" content="#0a0a0a">
+	<title>Louis Navarro — Contrebassiste, créateur numérique</title>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=VT323&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="assets/css/immersive.css">
+</head>
+<body class="immersive-template">
+
+<div class="immersive-shell">
+	<div class="immersive-grain" aria-hidden="true"></div>
+
+	<!-- Loading screen -->
+	<div class="immersive-loader" data-loading-screen>
+		<div class="immersive-loader__panel">
+			<p class="immersive-loader__eyebrow">Louis Navarro</p>
+			<h1 class="immersive-loader__title">Chargement de la scène</h1>
+			<div class="immersive-loader__bar"><div class="immersive-loader__progress"></div></div>
+		</div>
+	</div>
+
+	<!-- Header — matching original site -->
+	<header class="immersive-nav">
+		<div class="immersive-nav__brand">
+			<span class="immersive-nav__name">Louis Navarro</span>
+			<span class="immersive-nav__sub">Contrebassiste, créateur numérique</span>
+		</div>
+		<span class="mobile-nav-breadcrumb" id="mobile-breadcrumb">Accueil</span>
+		<nav id="menu-3d" class="immersive-nav__menu">
+			<ul class="immersive-menu">
+				<li class="menu-item"><a href="#" data-target="page-accueil">Accueil</a></li>
+				<li class="menu-item"><a href="#" data-target="page-bio">À propos</a></li>
+				<li class="menu-item"><a href="#" data-target="page-projets">Productions</a></li>
+				<li class="menu-item"><a href="#" data-target="page-actus">Actus</a></li>
+				<li class="menu-item"><a href="#" data-target="page-contact">Contact</a></li>
+			</ul>
+		</nav>
+		<button
+			id="explore-toggle"
+			class="explore-beacon"
+			type="button"
+			aria-pressed="false"
+			aria-label="Activer le mode exploration"
+		>
+			<span class="explore-beacon__halo" aria-hidden="true"></span>
+			<span class="explore-beacon__inner">
+				<span class="explore-beacon__label" data-text="Explore">[ Explore ]</span>
+				<span class="explore-beacon__meta">free roam</span>
+			</span>
+		</button>
+	</header>
+
+	<video
+		class="immersive-video-source"
+		data-scene-video
+		autoplay
+		muted
+		loop
+		playsinline
+		preload="auto"
+		aria-hidden="true"
+	>
+		<source src="uploads/2023/03/1stBackground.mp4" type="video/mp4">
+	</video>
+
+	<!-- Page sections -->
+	<main class="immersive-pages" id="immersive-pages">
+
+		<section id="page-accueil" class="immersive-page immersive-page--home is-active" data-slug="accueil">
+			<div class="immersive-page__panel immersive-page__panel--home">
+
+				<!-- Projet mis en avant -->
+				<div class="home-highlight" data-home-highlight></div>
+
+				<!-- Vidéos -->
+				<div class="home-videos" data-home-videos></div>
+
+			</div>
+		</section>
+
+		<section id="page-bio" class="immersive-page" data-slug="bio">
+			<div class="immersive-page__panel">
+				<div class="panel-header">
+					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">~/bio</span></div>
+					<span class="panel-header__meta">01</span>
+				</div>
+				<div class="panel-body">
+					<h2 class="immersive-page__title">À propos</h2>
+					<div class="immersive-page__content" data-immersive-page-content>
+						<p>Chargement...</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="page-projets" class="immersive-page" data-slug="projets">
+			<div class="immersive-page__panel">
+				<div class="panel-header">
+					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">~/projets</span></div>
+					<span class="panel-header__meta">02</span>
+				</div>
+				<div class="panel-body">
+					<h2 class="immersive-page__title">Productions</h2>
+					<div class="projets-tabs">
+						<button class="projets-tab is-active" data-projets-tab="musique">Musique</button>
+						<button class="projets-tab" data-projets-tab="numerique">Numérique</button>
+					</div>
+					<div class="projets-tab-content is-active" data-projets-panel="musique">
+						<div class="immersive-page__content" data-immersive-page-content>
+							<p>Chargement...</p>
+						</div>
+					</div>
+					<div class="projets-tab-content" data-projets-panel="numerique">
+						<div class="immersive-page__content" data-projets-creations>
+							<p>Chargement...</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="page-actus" class="immersive-page" data-slug="actus">
+			<div class="immersive-page__panel">
+				<div class="panel-header">
+					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">~/agenda</span></div>
+					<span class="panel-header__meta">03</span>
+				</div>
+				<div class="panel-body">
+					<h2 class="immersive-page__title">Actus</h2>
+					<div class="immersive-page__content">
+						<section class="concerts-panel">
+							<div class="concerts-panel__header">
+								<h3 class="concerts-panel__title">Prochains concerts</h3>
+							</div>
+							<div class="concerts-feed" data-concerts>
+								<p>Chargement des dates...</p>
+							</div>
+							<button class="concerts-panel__more" data-concerts-more>[ Voir tout l'agenda ]</button>
+						</section>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="page-contact" class="immersive-page" data-slug="contact">
+			<div class="immersive-page__panel">
+				<div class="panel-header">
+					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">~/contact</span></div>
+					<span class="panel-header__meta">04</span>
+				</div>
+				<div class="panel-body">
+					<h2 class="immersive-page__title">Contact</h2>
+					<div class="immersive-page__content" data-immersive-page-content>
+						<p>Chargement...</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+	</main>
+
+	<!-- Explore mode hint -->
+	<div class="explore-hint" id="explore-hint">WASD / flèches — déplacer &nbsp;|&nbsp; souris — regarder &nbsp;|&nbsp; espace / shift — monter / descendre</div>
+
+	<!-- Mobile joystick — only visible on touch devices in explore mode -->
+	<div class="mobile-joystick" id="mobile-joystick" aria-hidden="true">
+		<div class="mobile-joystick__knob" id="mobile-joystick-knob"></div>
+	</div>
+
+	<!-- RNBO audio player — terminal style -->
+	<div id="rnbo-player" class="rnbo-player">
+		<span class="rnbo-label">RNBO</span>
+		<span class="rnbo-separator">|</span>
+		<button id="rnbo-toggle" class="rnbo-toggle" aria-label="Pause" aria-pressed="true">
+			<span class="rnbo-toggle__play">[ ▶ PLAY ]</span>
+			<span class="rnbo-toggle__pause">[ ■ STOP ]</span>
+		</button>
+		<span class="rnbo-separator">|</span>
+		<span id="rnbo-track-name" class="rnbo-track">--</span>
+		<span class="rnbo-separator">|</span>
+		<span id="rnbo-time-display" class="rnbo-time">0:00 / 0:00</span>
+		<span class="rnbo-separator">|</span>
+		<span id="rnbo-bar" class="rnbo-bar">▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯</span>
+		<label class="sr-only" for="rnbo-seek">Lecture</label>
+		<input id="rnbo-seek" type="range" min="0" max="1" step="0.001" value="0">
+		<span class="rnbo-separator">|</span>
+		<span class="rnbo-vol-label">VOL</span>
+		<label class="sr-only" for="rnbo-volume">Volume</label>
+		<input id="rnbo-volume" type="range" min="0" max="1" step="0.01" value="0.5">
+	</div>
+
+	<!-- Mobile swipe navigation dots -->
+	<div class="mobile-page-dots" id="mobile-page-dots" aria-hidden="true"></div>
+	<div class="swipe-flash swipe-flash--left" id="swipe-flash-left" aria-hidden="true"></div>
+	<div class="swipe-flash swipe-flash--right" id="swipe-flash-right" aria-hidden="true"></div>
+
+	<!-- Visitor data overlay — terminal + data dump -->
+	<div class="visitor-data" data-visitor-data aria-hidden="true"></div>
+
+	<noscript>
+		<div class="immersive-noscript">
+			<p>Cette expérience immersive requiert JavaScript.</p>
+		</div>
+	</noscript>
+</div>
+
+<script src="assets/libs/rnbo.webaudio.js"></script>
+<script type="module" src="assets/js/main.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "bio": {
+    "title": "Biographie",
+    "content": "<p class='bio-statement'>Entre contrebasse et création numérique, Louis Navarro explore les territoires où le son devient espace. Formé au jazz entre Montauban, Amsterdam et Berlin, il développe une pratique hybride mêlant improvisation, synthèse audio et performance visuelle — là où un archet rencontre un algorithme.</p><p>Louis Navarro commence la basse électrique à 14 ans avant de s'initier à la contrebasse classique. En 2009, il intègre le département Jazz du Conservatoire de Montauban et la filière musicologie de l'Université Jean Jaurès. Lauréat d'un prix d'instrumentiste, puis étudiant au Conservatoire d'Amsterdam, il part ensuite à Berlin où il s'enrichit artistiquement.</p><p>En parallèle de son parcours d'interprète, il développe un travail de création numérique explorant les liens entre son, image et code. Ses performances audiovisuelles mêlent contrebasse, synthèse générative et dispositifs interactifs temps réel.</p><p>Il collabore et enregistre avec de nombreux artistes et se produit avec daoud, Amaury Faye, Thibaud Dufoy trio, Irina Gonzalez, Kiko Ruiz, Guillaume Lopez et d'autres en France et en Europe (Jazz in Marciac, North Sea Jazz festival, Copenhagen Jazz festival, Jazz à Vienne, etc.)</p>"
+  },
+  "projets": {
+    "title": "Productions",
+    "content": "<h3>Discographie</h3><div class='disco-grid'><div class='disco-item'><img src='uploads/2024/08/daoud-ok-cover.webp' alt='daoud'><span class='disco-artist'>daoud</span><span class='disco-year'>2025</span><a href='https://shop.daoudmusic.com/products/cd-ok?variant=56002565734786' target='_blank' rel='noopener'>Écouter</a></div><div class='disco-item'><img src='uploads/2024/08/album-cover-scaled-1-scaled-1.webp' alt='daoud'><span class='disco-artist'>daoud</span><span class='disco-year'>2024</span><a href='https://shop.daoudmusic.com/products/cd-good-boy?variant=56002561606018' target='_blank' rel='noopener'>Écouter</a></div><div class='disco-item'><img src='uploads/2023/07/CD_300dpi_1_-1024x1024.jpg' alt='Amaury Faye Ensemble'><span class='disco-artist'>Amaury Faye Ensemble</span><span class='disco-year'>2023</span><a href='https://fr.amauryfaye.com/discographie/darkwave/arise-suite.html' target='_blank' rel='noopener'>Écouter →</a></div><div class='disco-item'><img src='uploads/2022/12/3000x3000-1024x1024-1-1024x1024.jpg' alt='Irina González'><span class='disco-artist'>Irina González</span><span class='disco-year'>2022</span><a href='https://irinagonzalez.bandcamp.com/album/tiempo' target='_blank' rel='noopener'>Écouter →</a></div><div class='disco-item'><img src='uploads/2022/12/a0819195534_16.jpg' alt='ekko'><span class='disco-artist'>ekko</span><span class='disco-year'>2023</span><a href='https://ekkoekko-music.bandcamp.com/album/turbolent' target='_blank' rel='noopener'>Écouter →</a></div><div class='disco-item'><img src='uploads/2023/03/Capture-decran-2023-03-15-023425.png' alt='Kiko Ruiz'><span class='disco-artist'>Kiko Ruiz</span><span class='disco-year'>2022</span></div><div class='disco-item'><img src='uploads/2022/12/a2499726329_16.jpg' alt='Cyril Bernhard Trio'><span class='disco-artist'>Cyril Bernhard Trio</span><span class='disco-year'>2021</span><a href='https://cyrilbernhard.bandcamp.com/album/trio' target='_blank' rel='noopener'>Écouter →</a></div><div class='disco-item'><img src='uploads/2022/12/sorcieres-claire-gimatt.jpg' alt='Claire Gimat'><span class='disco-artist'>Claire Gimat</span><span class='disco-year'>2021</span></div><div class='disco-item'><img src='uploads/2022/12/cover_Amaury_Faye_Trio-1024x1024.jpg' alt='Amaury Faye Trio'><span class='disco-artist'>Amaury Faye Trio</span><span class='disco-year'>2019</span><a href='https://fr.amauryfaye.com/discographie/darkwave/live-in-brussels.html' target='_blank' rel='noopener'>Écouter →</a></div><div class='disco-item'><img src='uploads/2022/12/thibaud-dufoy-trio-cover.jpg' alt='Thibaud Dufoy Trio'><span class='disco-artist'>Thibaud Dufoy Trio</span><span class='disco-year'>2019</span><a href='https://soundcloud.com/thibauddufoytrio' target='_blank' rel='noopener'>Écouter</a></div><div class='disco-item'><img src='uploads/2022/12/450x450bb.jpg' alt='Amaury Faye Trio'><span class='disco-artist'>Amaury Faye Trio</span><span class='disco-year'>2018</span><a href='https://fr.amauryfaye.com/discographie/darkwave/clearway.html' target='_blank' rel='noopener'>Écouter →</a></div><div class='disco-item'><img src='uploads/2022/12/OWAL-COVER-1024x1024-1-1024x1024.jpg' alt='O.W.A.L'><span class='disco-artist'>O.W.A.L</span><span class='disco-year'>2017</span><a href='http://tancrededk.com/0-wa-l/' target='_blank' rel='noopener'>Écouter</a></div><div class='disco-item'><img src='uploads/2022/12/a0830595491_16.jpg' alt='Liya Grigoryan Trio'><span class='disco-artist'>Liya Grigoryan Trio</span><span class='disco-year'>2016</span><a href='https://fleaboyrecords.bandcamp.com/album/liya-grigoryan-trio' target='_blank' rel='noopener'>Écouter</a></div><div class='disco-item'><img src='uploads/2022/12/cie-guillaume-lopez-recuerdos-la-retirada-et-l-exil3.jpg' alt='Guillaume Lopez'><span class='disco-artist'>Guillaume Lopez</span><span class='disco-year'>2014</span></div><div class='disco-item'><img src='uploads/2022/12/avatars-000003225758-kvytiq-t500x500.jpg' alt='Bigmoetrio'><span class='disco-artist'>Bigmoetrio</span><span class='disco-year'>2010</span></div></div>",
+    "creations": [
+      { "type": "game", "url": "http://louis-navarro.com/ThreeJS/FordFocusTest/src/", "title": "Ford Focus 1999 — Le jeu vidéo", "description": "Jeu vidéo interactif basé sur le clip de daoud, réalisé en Three.js", "image": "uploads/2024/08/ford-focus-game-screenshot.png" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=jO48WD_V4Nk", "title": "daoud — Ford Focus 1999 (clip)" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=5C66zGdashQ", "title": "Création numérique" },
+      { "type": "youtube", "url": "https://youtu.be/WVbPQj-37zA", "title": "Création numérique" },
+      { "type": "youtube", "url": "https://youtu.be/2jFx0rkUDHU", "title": "Création numérique" },
+      { "type": "youtube", "url": "https://youtu.be/SlaJbgvNKF4", "title": "Création numérique" },
+      { "type": "vimeo", "url": "https://vimeo.com/721090696", "title": "Création numérique" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=1gyJ-bJTeec", "title": "Création numérique" }
+    ]
+  },
+  "contact": {
+    "title": "Contact",
+    "content": "<p class='contact-phone'>(+33) 6 29 02 81 53</p><p class='contact-email'><a href='mailto:louisnavarro.music@gmail.com'>louisnavarro.music@gmail.com</a></p><div class='contact-socials'><p class='contact-socials__label'>Retrouvez-moi</p><a href='https://www.instagram.com/louisnavarro.music/' target='_blank' rel='noopener'>Instagram</a><a href='https://www.youtube.com/@louisnavarro' target='_blank' rel='noopener'>YouTube</a></div>"
+  },
+  "accueil": {
+    "highlight": {
+      "image": "uploads/2024/08/daoud-ok-cover.webp",
+      "artist": "daoud",
+      "title": "OK",
+      "year": "2025",
+      "link": "https://shop.daoudmusic.com/products/cd-ok?variant=56002565734786",
+      "description": "Nouvel album de daoud — disponible maintenant"
+    },
+    "videos": [
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=jO48WD_V4Nk", "title": "daoud — Ford Focus 1999 (clip réalisé par Louis & Ulysse Navarro)", "link": { "url": "http://louis-navarro.com/ThreeJS/FordFocusTest/src/", "label": "[ > Jouer au jeu vidéo ]" } },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=6w4ymMz33n4", "title": "Live" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=rhjIMy7UlTs", "title": "Live" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=anXQ2HWnQts", "title": "Live" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=h-UEUasnE2o", "title": "Live" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=bz8dYJxBW_A", "title": "Live" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=k_k504v1rck", "title": "Live" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=grPakzgbwps", "title": "Live" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=CnFiI9_XxAk", "title": "Live" }
+    ]
+  }
+}

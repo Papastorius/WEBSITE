@@ -1,0 +1,1895 @@
+/* ============================================================
+   IMMERSIVE 3D — Louis Navarro
+   Design system: "Signal" — performance interface aesthetic
+   Geist Mono throughout. Red as signal, not decoration.
+   ============================================================ */
+
+:root {
+	--bg: #0a0a0a;
+	--text: #d4d4d4;
+	--muted: rgba(200, 200, 200, 0.65);
+	--accent: #d72638;
+	--accent-dim: rgba(215, 38, 56, 0.4);
+	--line: rgba(255, 255, 255, 0.07);
+	--panel-bg: rgba(10, 10, 10, 0.92);
+	--panel-bg-strong: rgba(10, 10, 10, 0.96);
+	--mono: "Geist Mono", "SF Mono", "Consolas", monospace;
+	--data: "VT323", "Courier New", monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: auto; }
+
+.sr-only {
+	position: absolute;
+	width: 1px; height: 1px;
+	padding: 0; margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* ---- Scrollbars — terminal accent ---- */
+
+/* Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(215, 38, 56, 0.35) rgba(255, 255, 255, 0.03);
+}
+
+/* WebKit — track */
+::-webkit-scrollbar {
+	width: 12px;
+	height: 12px;
+}
+
+::-webkit-scrollbar-track {
+	background: rgba(255, 255, 255, 0.02);
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgba(215, 38, 56, 0.3);
+	border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(215, 38, 56, 0.6);
+}
+
+::-webkit-scrollbar-thumb:active {
+	background: rgba(215, 38, 56, 0.8);
+}
+
+::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+/* ---- Base ---- */
+
+body.immersive-template {
+	margin: 0;
+	overflow: hidden;
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--mono);
+}
+
+body.immersive-template canvas {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	display: block;
+}
+
+/* ---- Shell ---- */
+
+.immersive-shell {
+	position: relative;
+	z-index: 1;
+	min-height: 100svh;
+	isolation: isolate;
+}
+
+/* ---- Film grain ---- */
+
+.immersive-grain {
+	position: fixed;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+	opacity: 0.04;
+	mix-blend-mode: overlay;
+}
+
+.immersive-video-source {
+	position: fixed;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* ---- Loader ---- */
+
+.immersive-loader {
+	position: fixed;
+	inset: 0;
+	z-index: 9;
+	display: grid;
+	place-items: center;
+	padding: 2rem;
+	background: var(--bg);
+	transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.immersive-loader.is-hidden,
+body.immersive-ready .immersive-loader {
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+.immersive-loader__panel {
+	max-width: 28rem;
+	text-align: center;
+}
+
+.immersive-loader__eyebrow {
+	margin: 0 0 1rem;
+	font-size: 0.75rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.immersive-loader__title {
+	margin: 0 0 1.5rem;
+	font-weight: 300;
+	font-size: clamp(1.6rem, 4vw, 2.4rem);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	line-height: 1.1;
+	color: #fff;
+}
+
+.immersive-loader__bar {
+	width: 100%;
+	height: 1px;
+	background: var(--line);
+	overflow: hidden;
+}
+
+.immersive-loader__progress {
+	width: 0%;
+	height: 100%;
+	background: var(--accent);
+	transition: width 0.3s ease;
+}
+
+/* ============================================================
+   HEADER — flat bar, pipe separators
+   ============================================================ */
+
+.immersive-nav {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	padding: 0 2rem;
+	height: 48px;
+	background: rgba(10, 10, 10, 0.92);
+	border-bottom: 1px solid var(--line);
+	backdrop-filter: blur(12px);
+	pointer-events: auto;
+}
+
+.immersive-nav__brand {
+	display: flex;
+	align-items: baseline;
+	gap: 0.8rem;
+	margin-right: auto;
+}
+
+.immersive-nav__name {
+	font-weight: 400;
+	font-size: 1.2rem;
+	letter-spacing: 0.06em;
+	color: #fff;
+	pointer-events: auto;
+}
+
+.immersive-nav__sub {
+	font-weight: 300;
+	font-size: 0.7rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.immersive-nav__menu {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	background: none;
+	backdrop-filter: none;
+	box-shadow: none;
+	pointer-events: auto;
+}
+
+.immersive-menu {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	height: 100%;
+}
+
+.immersive-menu a {
+	display: flex;
+	align-items: center;
+	height: 48px;
+	padding: 0 1.2rem;
+	color: var(--muted);
+	font-family: var(--mono);
+	font-weight: 400;
+	font-size: 0.9rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	text-decoration: none;
+	border-left: 1px solid var(--line);
+	border-radius: 0;
+	transition: color 0.15s, background 0.15s;
+}
+
+.immersive-menu li:last-child a {
+	border-right: 1px solid var(--line);
+}
+
+.immersive-menu a:hover {
+	color: #fff;
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.immersive-menu a.is-active {
+	color: #fff;
+	background: none;
+}
+
+/* Explore mode — disable ALL interactions except nav & player */
+.explore-active .immersive-page__panel,
+.explore-active .immersive-page__panel *,
+.explore-active .immersive-pages,
+.explore-active .visitor-data {
+	pointer-events: none !important;
+	user-select: none !important;
+}
+
+/* ============================================================
+   EXPLORE BUTTON — header CTA, terminal command style
+   ============================================================ */
+.explore-beacon {
+	position: relative;
+	z-index: 21;
+	display: flex;
+	align-items: center;
+	height: 48px;
+	margin-left: 1.2rem;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+	pointer-events: auto;
+	flex-shrink: 0;
+}
+
+/* Hidden — not needed in header layout */
+.explore-beacon__halo {
+	display: none;
+}
+
+.explore-beacon__inner {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	height: 30px;
+	padding: 0 0.9rem 0 0.7rem;
+	border: 1px solid rgba(215, 38, 56, 0.4);
+	border-radius: 0;
+	background: transparent;
+	transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+/* Pulsing dot — "live" indicator */
+.explore-beacon__inner::before {
+	content: "";
+	position: relative;
+	flex-shrink: 0;
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(--accent);
+	box-shadow: 0 0 6px rgba(215, 38, 56, 0.5);
+	animation: explore-dot-pulse 2.5s ease-in-out infinite;
+}
+
+/* No after pseudo-element needed */
+.explore-beacon__inner::after {
+	display: none;
+}
+
+.explore-beacon__label,
+.explore-beacon__meta {
+	position: relative;
+	z-index: 1;
+	display: inline;
+	text-align: left;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.explore-beacon__label {
+	max-width: none;
+	font-family: var(--mono);
+	font-size: 0.9rem;
+	font-weight: 400;
+	line-height: 1;
+	letter-spacing: 0.08em;
+	color: var(--accent);
+	text-shadow: none;
+}
+
+/* Subtle glitch — only on the label */
+.explore-beacon__label::after {
+	content: attr(data-text);
+	position: absolute;
+	inset: 0;
+	color: rgba(215, 38, 56, 0.5);
+	text-shadow:
+		-1px 0 rgba(0, 200, 200, 0.2),
+		1px 0 rgba(215, 38, 56, 0.2);
+	opacity: 0;
+	transform: translate(0, 0);
+	animation: explore-beacon-glitch 8s steps(1, end) infinite;
+	pointer-events: none;
+}
+
+/* Meta hidden in header — too compact */
+.explore-beacon__meta {
+	display: none;
+}
+
+/* --- Hover --- */
+.explore-beacon:hover .explore-beacon__inner {
+	border-color: rgba(215, 38, 56, 0.8);
+	background: rgba(215, 38, 56, 0.06);
+	box-shadow: 0 0 14px rgba(215, 38, 56, 0.12);
+}
+
+.explore-beacon:hover .explore-beacon__label {
+	color: #fff;
+}
+
+.explore-beacon:hover .explore-beacon__inner::before {
+	animation-duration: 0.8s;
+}
+
+.explore-beacon:focus-visible {
+	outline: none;
+}
+
+.explore-beacon:focus-visible .explore-beacon__inner {
+	border-color: rgba(215, 38, 56, 0.8);
+	box-shadow: 0 0 0 2px rgba(215, 38, 56, 0.2);
+}
+
+/* --- Active state — explore mode ON --- */
+.explore-beacon.is-active .explore-beacon__inner,
+.explore-active .explore-beacon .explore-beacon__inner {
+	border-color: rgba(215, 38, 56, 0.7);
+	background: rgba(215, 38, 56, 0.1);
+	box-shadow: 0 0 16px rgba(215, 38, 56, 0.12);
+}
+
+.explore-beacon.is-active .explore-beacon__inner::before,
+.explore-active .explore-beacon .explore-beacon__inner::before {
+	background: #fff;
+	box-shadow: 0 0 8px rgba(215, 38, 56, 0.8);
+	animation-duration: 0.9s;
+}
+
+.explore-beacon.is-active .explore-beacon__label,
+.explore-active .explore-beacon .explore-beacon__label {
+	color: #fff;
+}
+
+/* Dot pulse */
+@keyframes explore-dot-pulse {
+	0%, 100% { opacity: 0.4; transform: scale(0.85); }
+	50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* Glitch — rare and subtle */
+@keyframes explore-beacon-glitch {
+	0%, 92%, 100% {
+		opacity: 0;
+		transform: translate(0, 0);
+	}
+	93% {
+		opacity: 0.3;
+		transform: translate(-2px, 0);
+	}
+	94% {
+		opacity: 0.35;
+		transform: translate(2px, -1px);
+	}
+	95% {
+		opacity: 0;
+		transform: translate(0, 0);
+	}
+}
+
+/* Explore mode hint overlay */
+.explore-hint {
+	position: fixed;
+	bottom: 60px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 11;
+	font-family: var(--mono);
+	font-size: 0.7rem;
+	letter-spacing: 0.06em;
+	color: var(--muted);
+	background: rgba(5, 5, 5, 0.9);
+	border: 1px solid var(--line);
+	padding: 0.5rem 1.2rem;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.explore-hint.is-visible {
+	opacity: 1;
+}
+
+.immersive-menu a::after { display: none; }
+
+/* ---- Visitor data overlay — installation status monitor ---- */
+
+.visitor-data {
+	position: fixed;
+	bottom: 64px;
+	right: 1.2rem;
+	z-index: 6;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	font-family: var(--mono);
+	font-size: 0.6rem;
+	line-height: 1;
+	letter-spacing: 0.06em;
+	color: rgba(180, 200, 210, 0.9);
+	pointer-events: none;
+	user-select: none;
+	text-align: left;
+	padding: 0.5rem 0.7rem 0.45rem;
+	border: 1px solid rgba(42, 72, 88, 0.15);
+	border-left: 2px solid rgba(215, 38, 56, 0.3);
+	background: rgba(5, 5, 5, 0.5);
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
+}
+
+.visitor-data__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.4rem;
+	padding-bottom: 0.3rem;
+	border-bottom: 1px solid rgba(42, 72, 88, 0.12);
+	font-size: 0.5rem;
+	color: rgba(215, 38, 56, 0.8);
+	letter-spacing: 0.12em;
+}
+
+.visitor-data__dot {
+	display: inline-block;
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	background: rgba(215, 38, 56, 0.5);
+	margin-right: 0.4em;
+	animation: vd-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes vd-pulse {
+	0%, 100% { opacity: 0.3; }
+	50% { opacity: 1; }
+}
+
+.visitor-data__line {
+	white-space: nowrap;
+	overflow: hidden;
+	padding: 0.18rem 0;
+	display: flex;
+	gap: 0.6em;
+}
+
+.visitor-data__label {
+	color: rgba(140, 170, 185, 0.8);
+	min-width: 5.5em;
+	flex-shrink: 0;
+}
+
+.visitor-data__value {
+	color: rgba(210, 220, 225, 0.95);
+}
+
+.visitor-data__footer {
+	margin-top: 0.35rem;
+	padding-top: 0.3rem;
+	border-top: 1px solid rgba(42, 72, 88, 0.08);
+	font-size: 0.7rem;
+	color: rgba(215, 38, 56, 0.65);
+	font-style: normal;
+	letter-spacing: 0.15em;
+	letter-spacing: 0.02em;
+}
+
+.visitor-data__dump {
+	display: block;
+	max-width: 28rem;
+	margin-bottom: 0.6rem;
+	padding-bottom: 0.4rem;
+	border-bottom: 1px solid rgba(42, 72, 88, 0.06);
+	font-size: 0.5rem;
+	line-height: 1.4;
+	word-break: break-all;
+	color: rgba(42, 72, 88, 0.15);
+	text-align: left;
+}
+
+/* ---- Glitch animation ---- */
+
+@keyframes glitch {
+	0%, 90%, 100% { text-shadow: none; transform: none; }
+	91% { text-shadow: -3px 0 rgba(215, 38, 56, 0.7), 3px 0 rgba(0, 200, 200, 0.7); transform: translate(2px, 0); }
+	92% { text-shadow: 3px 0 rgba(215, 38, 56, 0.7), -3px 0 rgba(0, 200, 200, 0.7); transform: translate(-2px, 1px); }
+	93% { text-shadow: -2px 1px rgba(215, 38, 56, 0.5), 2px -1px rgba(0, 200, 200, 0.5); transform: translate(0, -1px); }
+	94% { text-shadow: none; transform: translate(1px, 0); }
+	95% { text-shadow: -4px 0 rgba(215, 38, 56, 0.8), 4px 0 rgba(0, 200, 200, 0.8); transform: translate(-3px, 0); }
+	96% { text-shadow: none; transform: none; }
+}
+
+.glitch-once { animation: glitch 0.6s 1; }
+
+/* Bio statement */
+.bio-statement {
+	font-size: 1.8rem;
+	font-weight: 300;
+	line-height: 1.6;
+	color: #fff;
+	margin-bottom: 1.5rem;
+	padding-bottom: 1.2rem;
+	border-bottom: 1px solid var(--line);
+}
+
+/* Contact socials */
+.contact-socials {
+	margin-top: 1.5rem;
+	padding-top: 1.2rem;
+	border-top: 1px solid var(--line);
+}
+
+.contact-socials__label {
+	font-size: 0.65rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin-bottom: 0.8rem;
+}
+
+.contact-socials a {
+	display: inline-block;
+	margin-right: 1.5rem;
+	font-size: 1.4rem;
+	font-weight: 400;
+	color: var(--accent);
+	text-decoration: none;
+	letter-spacing: 0.02em;
+}
+
+.contact-socials a:hover { color: #fff; }
+
+/* ============================================================
+   PANEL HEADER — status bar
+   ============================================================ */
+
+@keyframes pulse-dot {
+	0%, 100% { opacity: 0.5; }
+	50% { opacity: 1; }
+}
+
+.panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 20px;
+	border-bottom: 1px solid var(--line);
+	background: rgba(255, 255, 255, 0.015);
+	flex-shrink: 0;
+}
+
+.panel-header__left {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.panel-header__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--accent);
+	animation: pulse-dot 2.5s ease-in-out infinite;
+}
+
+.panel-header__label {
+	font-size: 1rem;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.panel-header__meta {
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.15);
+	letter-spacing: 0.05em;
+}
+
+.panel-body {
+	padding: 30px 32px 40px;
+	overflow-y: auto;
+	flex: 1;
+}
+
+/* ============================================================
+   PAGE SECTIONS
+   ============================================================ */
+
+.immersive-pages { display: none; }
+.immersive-page {}
+.immersive-page.is-active {}
+
+.immersive-page__eyebrow { display: none; }
+
+.immersive-page__panel {
+	position: relative;
+	width: 1600px;
+	max-height: 1600px;
+	padding: 0;
+	font-family: var(--mono);
+	font-size: 1.5rem;
+	border: 1px solid var(--line);
+	border-radius: 2px;
+	background: var(--panel-bg);
+	backdrop-filter: blur(12px);
+	box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+	pointer-events: auto;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.immersive-page__title {
+	margin: 0 0 1.5rem;
+	font-weight: 300;
+	font-size: 3.2rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	line-height: 1.1;
+	color: #fff;
+}
+
+.immersive-page__content {
+	margin-top: 0;
+	max-height: 1200px;
+	padding-right: 0.8rem;
+	overflow: auto;
+	font-size: 1.35rem;
+	line-height: 1.85;
+	color: var(--text);
+}
+
+.immersive-page__content > :first-child { margin-top: 0; }
+
+.immersive-page__content a {
+	color: var(--accent);
+	text-decoration: none;
+}
+
+.immersive-page__content a:hover { text-decoration: underline; }
+
+.immersive-page__content h2,
+.immersive-page__content h3,
+.immersive-page__content h4 {
+	margin-top: 1.4rem;
+	font-weight: 500;
+	line-height: 1.15;
+	letter-spacing: 0.02em;
+	color: #fff;
+}
+
+.immersive-page__content p,
+.immersive-page__content ul,
+.immersive-page__content ol,
+.immersive-page__content figure {
+	margin-bottom: 1rem;
+}
+
+.immersive-page__content img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 2px;
+}
+
+/* ---- Discography grid ---- */
+
+.disco-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+	gap: 2.5rem;
+	margin-top: 1rem;
+}
+
+.disco-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+
+.disco-item img {
+	width: 100%;
+	aspect-ratio: 1;
+	object-fit: cover;
+	border-radius: 2px;
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.disco-artist {
+	font-size: 1.4rem;
+	font-weight: 500;
+	color: #fff;
+	line-height: 1.2;
+}
+
+.disco-year {
+	font-size: 1.1rem;
+	color: var(--muted);
+}
+
+.disco-item a {
+	display: inline-block;
+	margin-top: 0.3rem;
+	padding: 0.4rem 0.8rem;
+	font-size: 1.1rem;
+	font-weight: 400;
+	color: var(--accent);
+	text-decoration: none;
+	border: 1px solid var(--line);
+	border-radius: 0;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	transition: background 0.15s, color 0.15s;
+}
+
+.disco-item a:hover {
+	background: var(--accent);
+	color: #fff;
+}
+
+/* ---- Contact ---- */
+
+.contact-phone,
+.contact-email {
+	font-size: 1.6rem;
+	margin-bottom: 0.5rem;
+}
+
+.contact-email a { color: #fff; }
+
+/* ---- Concerts ---- */
+
+.concerts-panel {
+	margin-top: 1.2rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--line);
+}
+
+.concerts-panel__header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+	margin-bottom: 0.85rem;
+}
+
+.concerts-panel__title {
+	margin: 0;
+	font-size: 0.9rem;
+	font-weight: 400;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.concerts-feed {
+	display: grid;
+	gap: 0;
+}
+
+.concert-card {
+	padding: 1rem 0;
+	border-bottom: 1px solid var(--line);
+	display: grid;
+	grid-template-columns: 140px 1fr;
+	gap: 1rem;
+	align-items: baseline;
+}
+
+.concert-card:last-child { border-bottom: none; }
+
+.concert-card__date {
+	font-size: 1.1rem;
+	letter-spacing: 0.06em;
+	color: var(--muted);
+}
+
+.concert-card__title {
+	margin: 0;
+	font-size: 1.3rem;
+	font-weight: 500;
+	color: #fff;
+}
+
+.concert-card__meta,
+.concert-card__description {
+	margin: 0;
+	font-size: 1.2rem;
+	color: var(--muted);
+	grid-column: 2;
+}
+
+.concert-card__description { margin-top: 0.2rem; }
+
+/* ---- Projets tabs ---- */
+
+.projets-tabs {
+	display: flex;
+	gap: 0;
+	margin: 1rem 0;
+}
+
+.projets-tab {
+	flex: 1;
+	padding: 0.7rem 1.2rem;
+	border: 1px solid var(--line);
+	border-right: none;
+	border-radius: 0;
+	background: transparent;
+	color: var(--muted);
+	font-family: var(--mono);
+	font-size: 1.15rem;
+	font-weight: 400;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	text-align: center;
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.projets-tab:last-child { border-right: 1px solid var(--line); }
+
+.projets-tab:hover {
+	color: #fff;
+	background: rgba(255, 255, 255, 0.02);
+}
+
+.projets-tab.is-active {
+	color: #fff;
+	background: rgba(215, 38, 56, 0.08);
+	border-color: rgba(215, 38, 56, 0.2);
+}
+
+.projets-tab-content {
+	display: none;
+	margin-top: 0;
+}
+
+.projets-tab-content.is-active { display: block; }
+
+/* ---- Productions panel — wider for creations grid ---- */
+#page-projets .immersive-page__panel {
+	width: 2000px;
+}
+
+/* ---- Creations numériques ---- */
+
+.creations-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1rem;
+}
+
+/* ---- Home: Highlight card ---- */
+
+.home-highlight__link {
+	display: flex;
+	gap: 1.2rem;
+	align-items: center;
+	padding: 1rem 1.2rem;
+	border: 1px solid var(--line);
+	border-radius: 2px;
+	background: transparent;
+	text-decoration: none;
+	color: inherit;
+	transition: background 0.2s;
+}
+
+.home-highlight__link:hover {
+	background: rgba(255, 255, 255, 0.02);
+}
+
+.home-highlight__img {
+	flex: 0 0 9rem;
+	width: 9rem;
+	height: 9rem;
+	object-fit: cover;
+	border-radius: 2px;
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.home-highlight__info {
+	flex: 1;
+	min-width: 0;
+}
+
+.home-highlight__eyebrow {
+	margin: 0 0 0.3rem;
+	font-size: 0.9rem;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.home-highlight__title {
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: 500;
+	line-height: 1.2;
+	color: #fff;
+}
+
+.home-highlight__year {
+	margin: 0.2rem 0 0;
+	font-size: 1.1rem;
+	color: var(--muted);
+}
+
+.home-highlight__desc {
+	margin: 0.5rem 0 0;
+	font-size: 1.2rem;
+	color: var(--text);
+	line-height: 1.5;
+}
+
+.home-highlight__cta {
+	display: inline-block;
+	margin-top: 0.5rem;
+	font-size: 1.1rem;
+	font-weight: 400;
+	letter-spacing: 0.06em;
+	color: var(--accent);
+}
+
+/* ---- Home: Videos ---- */
+
+.home-videos__grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1rem;
+	margin-top: 0.5rem;
+}
+
+.home-video-item__embed {
+	position: relative;
+	width: 100%;
+	padding-bottom: 56.25%;
+	border-radius: 2px;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.02);
+}
+
+.home-video-item__embed iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+
+.home-video-item__player {
+	width: 100%;
+	border-radius: 2px;
+	background: #000;
+}
+
+.home-video-item__title {
+	margin: 0.5rem 0 0;
+	font-size: 1.1rem;
+	color: var(--muted);
+}
+
+.home-video-item__link {
+	display: inline-block;
+	margin-top: 0.6rem;
+	padding: 0.45rem 0.9rem;
+	font-family: var(--mono);
+	font-size: 1.05rem;
+	letter-spacing: 0.08em;
+	color: var(--accent);
+	text-decoration: none;
+	border: 1px solid rgba(215, 38, 56, 0.35);
+	background: rgba(215, 38, 56, 0.06);
+	transition: color 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.home-video-item__link:hover {
+	color: #fff;
+	border-color: rgba(215, 38, 56, 0.7);
+	background: rgba(215, 38, 56, 0.12);
+	box-shadow: 0 0 14px rgba(215, 38, 56, 0.12);
+}
+
+/* ---- Game card in creations grid ---- */
+
+.creations-game-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid rgba(215, 38, 56, 0.25);
+	border-radius: 2px;
+	background: rgba(215, 38, 56, 0.04);
+	text-decoration: none;
+	color: inherit;
+	transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.creations-game-card:hover {
+	border-color: rgba(215, 38, 56, 0.5);
+	background: rgba(215, 38, 56, 0.08);
+	box-shadow: 0 0 20px rgba(215, 38, 56, 0.1);
+}
+
+.creations-game-card__img {
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	object-fit: cover;
+	display: block;
+	border-bottom: 1px solid rgba(215, 38, 56, 0.15);
+}
+
+.creations-game-card__body {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.2rem 1.4rem;
+}
+
+.creations-game-card__icon {
+	font-family: var(--mono);
+	font-size: 2.2rem;
+	font-weight: 700;
+	color: var(--accent);
+	flex-shrink: 0;
+}
+
+.creations-game-card__info {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+}
+
+.creations-game-card__title {
+	font-family: var(--mono);
+	font-size: 1.8rem;
+	font-weight: 500;
+	color: #fff;
+	letter-spacing: 0.04em;
+}
+
+.creations-game-card__desc {
+	font-size: 1.4rem;
+	color: var(--muted);
+	line-height: 1.4;
+}
+
+.creations-game-card__cta {
+	font-family: var(--mono);
+	font-size: 1.5rem;
+	letter-spacing: 0.08em;
+	color: var(--accent);
+	flex-shrink: 0;
+	transition: color 0.15s;
+}
+
+.creations-game-card:hover .creations-game-card__cta {
+	color: #fff;
+}
+
+/* ---- Concerts: "voir tout" button ---- */
+
+.concerts-panel__more {
+	display: inline-block;
+	margin-top: 1.2rem;
+	padding: 0.6rem 1.2rem;
+	border: 1px solid var(--line);
+	border-radius: 0;
+	background: transparent;
+	color: var(--muted);
+	font-family: var(--mono);
+	font-size: 1.1rem;
+	font-weight: 400;
+	letter-spacing: 0.06em;
+	cursor: pointer;
+	transition: color 0.15s, background 0.15s;
+}
+
+.concerts-panel__more:hover {
+	color: #fff;
+	background: rgba(255, 255, 255, 0.03);
+}
+
+/* ---- Home page ---- */
+
+.immersive-page--home { align-items: start; }
+
+.immersive-page__panel--home {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	padding: 32px;
+	max-height: 1100px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+.immersive-page__panel--home .immersive-page__content {
+	margin-top: 0;
+	max-height: none;
+	padding-right: 0;
+	overflow: visible;
+}
+
+.immersive-page__panel--home .concerts-panel {
+	margin-top: 0;
+}
+
+/* ============================================================
+   RNBO PLAYER — bottom bar
+   ============================================================ */
+
+.rnbo-player {
+	position: fixed;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 1rem;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.8rem;
+	height: 42px;
+	padding: 0 1.6rem;
+	border: 1px solid var(--line);
+	border-radius: 3px;
+	background: rgba(5, 5, 5, 0.92);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+	width: auto;
+	max-width: calc(100vw - 4rem);
+	font-family: var(--mono);
+	font-size: 0.8rem;
+	letter-spacing: 0.04em;
+	color: var(--muted);
+}
+
+.rnbo-label {
+	font-size: 0.75rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--accent);
+}
+
+.rnbo-separator {
+	color: rgba(255, 255, 255, 0.2);
+	font-size: 0.85rem;
+	user-select: none;
+}
+
+.rnbo-toggle {
+	display: inline;
+	flex: 0 0 auto;
+	width: auto;
+	height: auto;
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	background: transparent;
+	color: var(--text);
+	cursor: pointer;
+	font-family: var(--mono);
+	font-size: 0.8rem;
+	letter-spacing: 0.06em;
+	transition: color 0.15s;
+}
+
+.rnbo-toggle:hover { color: #fff; }
+
+/* Toggle text states */
+.rnbo-toggle[aria-pressed="true"] .rnbo-toggle__play,
+.rnbo-toggle[aria-pressed="false"] .rnbo-toggle__pause { display: none; }
+
+.rnbo-track {
+	color: #fff;
+	font-size: 0.8rem;
+	letter-spacing: 0.04em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 200px;
+}
+
+.rnbo-time {
+	min-width: 7rem;
+	font-size: 0.8rem;
+	text-align: center;
+	color: var(--text);
+	letter-spacing: 0.04em;
+	white-space: nowrap;
+}
+
+.rnbo-bar {
+	font-size: 0.7rem;
+	letter-spacing: -0.01em;
+	color: var(--accent-dim);
+	white-space: nowrap;
+	cursor: pointer;
+	user-select: none;
+	transition: color 0.15s;
+}
+
+.rnbo-bar:hover {
+	color: var(--accent);
+}
+
+/* ---- Shared slider reset ---- */
+#rnbo-seek,
+#rnbo-volume {
+	-webkit-appearance: none;
+	appearance: none;
+	background: transparent;
+	cursor: pointer;
+	outline: none;
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* ---- Seek bar ---- */
+#rnbo-seek {
+	flex: 1 1 auto;
+	height: 16px;
+}
+
+/* ---- Volume ---- */
+#rnbo-volume {
+	flex: 0 0 4.5rem;
+	height: 16px;
+}
+
+.rnbo-vol-label {
+	font-size: 0.65rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+/* ---- WebKit track ---- */
+#rnbo-seek::-webkit-slider-runnable-track,
+#rnbo-volume::-webkit-slider-runnable-track {
+	height: 2px;
+	border: none;
+	border-radius: 0;
+	background: rgba(255, 255, 255, 0.08);
+	transition: background 0.2s;
+}
+
+#rnbo-seek:hover::-webkit-slider-runnable-track {
+	background: rgba(255, 255, 255, 0.14);
+	box-shadow: 0 0 6px rgba(215, 38, 56, 0.15);
+}
+
+#rnbo-volume:hover::-webkit-slider-runnable-track {
+	background: rgba(255, 255, 255, 0.14);
+}
+
+/* ---- WebKit thumb ---- */
+#rnbo-seek::-webkit-slider-thumb,
+#rnbo-volume::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 3px;
+	height: 12px;
+	margin-top: -5px;
+	border: none;
+	border-radius: 0;
+	background: var(--accent);
+	box-shadow: 0 0 6px rgba(215, 38, 56, 0.4);
+	transition: height 0.15s, margin-top 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+#rnbo-seek:hover::-webkit-slider-thumb,
+#rnbo-volume:hover::-webkit-slider-thumb {
+	height: 16px;
+	margin-top: -7px;
+	background: #ff3a50;
+	box-shadow: 0 0 10px rgba(215, 38, 56, 0.6), 0 0 20px rgba(215, 38, 56, 0.2);
+}
+
+#rnbo-seek:active::-webkit-slider-thumb,
+#rnbo-volume:active::-webkit-slider-thumb {
+	background: #fff;
+	box-shadow: 0 0 12px rgba(215, 38, 56, 0.8);
+}
+
+/* ---- Firefox track ---- */
+#rnbo-seek::-moz-range-track,
+#rnbo-volume::-moz-range-track {
+	height: 2px;
+	border: none;
+	border-radius: 0;
+	background: rgba(255, 255, 255, 0.08);
+}
+
+#rnbo-seek:hover::-moz-range-track {
+	background: rgba(255, 255, 255, 0.14);
+}
+
+#rnbo-volume:hover::-moz-range-track {
+	background: rgba(255, 255, 255, 0.14);
+}
+
+/* Firefox progress (filled portion) */
+#rnbo-seek::-moz-range-progress,
+#rnbo-volume::-moz-range-progress {
+	height: 2px;
+	border-radius: 0;
+	background: var(--accent);
+	box-shadow: 0 0 4px rgba(215, 38, 56, 0.3);
+}
+
+/* ---- Firefox thumb ---- */
+#rnbo-seek::-moz-range-thumb,
+#rnbo-volume::-moz-range-thumb {
+	width: 3px;
+	height: 12px;
+	border: none;
+	border-radius: 0;
+	background: var(--accent);
+	box-shadow: 0 0 6px rgba(215, 38, 56, 0.4);
+	transition: height 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+#rnbo-seek:hover::-moz-range-thumb,
+#rnbo-volume:hover::-moz-range-thumb {
+	height: 16px;
+	background: #ff3a50;
+	box-shadow: 0 0 10px rgba(215, 38, 56, 0.6), 0 0 20px rgba(215, 38, 56, 0.2);
+}
+
+#rnbo-seek:active::-moz-range-thumb,
+#rnbo-volume:active::-moz-range-thumb {
+	background: #fff;
+	box-shadow: 0 0 12px rgba(215, 38, 56, 0.8);
+}
+
+/* ---- Noscript ---- */
+
+.immersive-noscript {
+	position: fixed;
+	left: 1rem; right: 1rem; bottom: 1rem;
+	z-index: 8;
+	padding: 1rem 1.2rem;
+	border: 1px solid var(--line);
+	border-radius: 0;
+	background: rgba(0, 0, 0, 0.92);
+}
+
+.immersive-empty,
+.immersive-error-message {
+	margin: 0;
+	padding: 0.85rem 1rem;
+	border-radius: 0;
+	background: rgba(255, 255, 255, 0.03);
+	color: var(--text);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 980px) {
+	.immersive-nav {
+		padding: 0 1rem;
+		height: 42px;
+	}
+
+	.immersive-nav__sub { display: none; }
+
+	.immersive-menu a {
+		padding: 0 0.8rem;
+		font-size: 0.65rem;
+		height: 42px;
+	}
+
+	.explore-beacon {
+		margin-left: 0.6rem;
+	}
+
+	.explore-beacon__inner {
+		height: 26px;
+		padding: 0 0.7rem 0 0.55rem;
+		gap: 0.4rem;
+	}
+
+	.explore-beacon__label {
+		font-size: 0.7rem;
+	}
+
+	.disco-grid {
+		grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+		gap: 0.8rem;
+	}
+
+	.home-highlight__img {
+		flex: 0 0 4.5rem;
+		width: 4.5rem;
+		height: 4.5rem;
+	}
+
+	.visitor-data {
+		right: 1rem;
+		font-size: 0.5rem;
+	}
+
+	/* Game card */
+	.creations-game-card__title { font-size: 1.4rem; }
+	.creations-game-card__desc { font-size: 1.1rem; }
+	.creations-game-card__cta { font-size: 1.2rem; }
+	.creations-game-card__icon { font-size: 1.6rem; }
+
+	/* Productions panel — keep same width as others on tablet */
+	#page-projets .immersive-page__panel {
+		width: 1400px;
+	}
+}
+
+/* ---- Mobile breadcrumb — hidden on desktop ---- */
+.mobile-nav-breadcrumb { display: none; }
+.mobile-page-dots { display: none; }
+.swipe-flash { display: none; }
+
+@media (max-width: 680px) {
+
+	/* ============================================================
+	   HEADER — two-tier: brand row + nav row
+	   Stacked layout gives each element proper tap targets
+	   ============================================================ */
+	.immersive-nav {
+		position: fixed;
+		flex-wrap: wrap;
+		padding: 0;
+		height: auto;
+		gap: 0;
+		border-bottom: none;
+	}
+
+	/* Top row: brand + explore button */
+	.immersive-nav__brand {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 0;
+		margin-right: 0;
+		padding: 0 0.8rem;
+		height: 40px;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.immersive-nav__name {
+		font-size: 0.8rem;
+		color: #fff;
+		letter-spacing: 0.08em;
+	}
+
+	.immersive-nav__sub { display: none; }
+
+	/* Breadcrumb hidden — nav row shows the active page */
+	.mobile-nav-breadcrumb {
+		display: none;
+	}
+
+	/* Explore button — force into brand row (top) via order */
+	.explore-beacon {
+		position: absolute;
+		right: 0.8rem;
+		top: 0;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		margin-left: 0;
+		flex-shrink: 0;
+	}
+
+	.explore-beacon__inner {
+		height: 22px;
+		padding: 0 0.5rem 0 0.4rem;
+		gap: 0.25rem;
+	}
+
+	.explore-beacon__inner::before {
+		width: 4px;
+		height: 4px;
+	}
+
+	.explore-beacon__label {
+		font-size: 0.5rem;
+		letter-spacing: 0.06em;
+	}
+
+	/* Hide WASD hint on mobile */
+	.explore-hint { display: none !important; }
+
+	/* Bottom row: navigation links — full width, evenly spaced */
+	.immersive-nav__menu {
+		width: 100%;
+		height: 36px;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.immersive-menu {
+		width: 100%;
+		gap: 0;
+		justify-content: stretch;
+	}
+
+	.immersive-menu li {
+		flex: 1;
+	}
+
+	.immersive-menu a {
+		justify-content: center;
+		padding: 0;
+		font-size: 0.55rem;
+		height: 36px;
+		letter-spacing: 0.06em;
+		border-left: 1px solid var(--line);
+	}
+
+	.immersive-menu li:first-child a {
+		border-left: none;
+	}
+
+	.immersive-menu li:last-child a {
+		border-right: none;
+	}
+
+	/* Active link — red underline accent */
+	.immersive-menu a.is-active {
+		color: #fff;
+		box-shadow: inset 0 -2px 0 var(--accent);
+	}
+
+
+	/* ============================================================
+	   PAGE DOTS — refined, slightly larger
+	   ============================================================ */
+	.mobile-page-dots {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 14px;
+		position: fixed;
+		bottom: 52px;
+		left: 0;
+		right: 0;
+		z-index: 15;
+		pointer-events: auto;
+		padding: 8px 0;
+	}
+
+	.mobile-page-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.15);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		padding: 0;
+		cursor: pointer;
+		position: relative;
+		transition: all 0.25s ease;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.mobile-page-dot::before {
+		content: '';
+		position: absolute;
+		inset: -12px;
+	}
+
+	.mobile-page-dot.is-active {
+		background: var(--accent);
+		border-color: var(--accent);
+		box-shadow: 0 0 10px rgba(215, 38, 56, 0.5),
+		            0 0 3px rgba(215, 38, 56, 0.8);
+		transform: scale(1.4);
+	}
+
+
+	/* ============================================================
+	   SWIPE FLASH
+	   ============================================================ */
+	.swipe-flash {
+		display: block;
+		position: fixed;
+		top: 76px; /* below two-tier header */
+		bottom: 0;
+		z-index: 14;
+		pointer-events: none;
+		width: 40px;
+		opacity: 0;
+		transition: opacity 0.15s ease-out;
+	}
+
+	.swipe-flash--left {
+		left: 0;
+		background: linear-gradient(to right, rgba(215, 38, 56, 0.5), transparent);
+	}
+
+	.swipe-flash--right {
+		right: 0;
+		background: linear-gradient(to left, rgba(215, 38, 56, 0.5), transparent);
+	}
+
+	.swipe-flash.is-flashing {
+		opacity: 1;
+	}
+
+
+	/* ============================================================
+	   PANELS — 9:16 portrait ratio for mobile
+	   ============================================================ */
+	.immersive-page__panel {
+		width: 600px;
+		max-height: 1066px; /* 600 × 16/9 */
+	}
+
+	#page-projets .immersive-page__panel {
+		width: 600px;
+	}
+
+	.immersive-page__panel--home {
+		max-height: 1066px;
+		padding: 20px;
+	}
+
+	.panel-header {
+		padding: 8px 14px;
+	}
+
+	.panel-header__label { font-size: 0.7rem; }
+	.panel-header__meta { font-size: 0.55rem; }
+
+	.panel-body {
+		padding: 18px 18px 22px;
+	}
+
+	.immersive-page__title {
+		font-size: 1.6rem;
+		margin-bottom: 0.8rem;
+	}
+
+	.immersive-page__content {
+		max-height: 800px;
+		font-size: 1rem;
+	}
+
+
+	/* ============================================================
+	   CONTENT SECTIONS
+	   ============================================================ */
+
+	/* ---- Bio ---- */
+	.bio-statement {
+		font-size: 1.05rem;
+		padding-bottom: 0.6rem;
+		margin-bottom: 0.8rem;
+	}
+
+	/* ---- Projets tabs ---- */
+	.projets-tab {
+		padding: 0.4rem 0.6rem;
+		font-size: 0.8rem;
+	}
+
+	/* ---- Concerts ---- */
+	.concerts-panel__title { font-size: 0.85rem; }
+	.concert-card {
+		padding: 0.5rem 0;
+		grid-template-columns: 90px 1fr;
+		gap: 0.5rem;
+	}
+	.concert-card__title { font-size: 0.9rem; }
+	.concert-card__date { font-size: 0.78rem; }
+	.concert-card__meta,
+	.concert-card__description { font-size: 0.78rem; }
+
+	/* ---- Disco grid ---- */
+	.disco-grid {
+		grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+		gap: 0.6rem;
+	}
+	.disco-artist { font-size: 0.7rem; }
+	.disco-year { font-size: 0.55rem; }
+	.disco-item a {
+		padding: 0.3rem 0.6rem;
+		font-size: 0.65rem;
+	}
+
+	/* ---- Home highlight ---- */
+	.home-highlight__link {
+		padding: 0.8rem 1rem;
+		gap: 0.8rem;
+	}
+	.home-highlight__img {
+		flex: 0 0 4.5rem;
+		width: 4.5rem;
+		height: 4.5rem;
+	}
+	.home-highlight__title { font-size: 1rem; }
+	.home-highlight__desc { font-size: 0.8rem; }
+	.home-highlight__eyebrow { font-size: 0.6rem; }
+	.home-highlight__year { font-size: 0.7rem; }
+
+	/* ---- Home video ---- */
+	.home-video-item__title { font-size: 0.85rem; }
+	.home-video-item__link {
+		padding: 0.4rem 0.8rem;
+		font-size: 0.78rem;
+	}
+
+	/* ---- Game card ---- */
+	.creations-game-card__body {
+		padding: 1rem 1.2rem;
+		gap: 0.8rem;
+	}
+	.creations-game-card__icon { font-size: 1.4rem; }
+	.creations-game-card__title { font-size: 1.1rem; }
+	.creations-game-card__desc { font-size: 0.85rem; }
+	.creations-game-card__cta { font-size: 0.9rem; }
+
+
+	/* ============================================================
+	   PLAYER — floating bar with subtle top accent
+	   ============================================================ */
+	.rnbo-player {
+		height: 36px;
+		padding: 0 0.7rem;
+		gap: 0.3rem;
+		font-size: 0.65rem;
+		bottom: 0.5rem;
+		max-width: calc(100vw - 1rem);
+		border-radius: 2px;
+		border-top: 1px solid var(--accent-dim);
+	}
+
+	.rnbo-bar,
+	.rnbo-vol-label,
+	#rnbo-volume { display: none; }
+
+	.rnbo-time {
+		font-size: 0.6rem;
+		min-width: auto;
+	}
+
+	.rnbo-track { max-width: 100px; font-size: 0.65rem; }
+	.rnbo-label { font-size: 0.6rem; }
+	.rnbo-separator { font-size: 0.7rem; }
+	.rnbo-toggle { font-size: 0.65rem; }
+
+	#rnbo-seek {
+		flex: 1 1 auto;
+		min-width: 40px;
+	}
+
+
+	/* ============================================================
+	   MISC
+	   ============================================================ */
+	.visitor-data { display: none; }
+
+	.contact-phone,
+	.contact-email { font-size: 1rem; }
+	.contact-socials a { font-size: 1.1rem; margin-right: 1.2rem; }
+	.contact-socials__label { font-size: 0.65rem; }
+
+	::-webkit-scrollbar {
+		width: 6px;
+		height: 6px;
+	}
+
+
+	/* ============================================================
+	   JOYSTICK — explore mode movement
+	   ============================================================ */
+	.mobile-joystick {
+		position: fixed;
+		bottom: 80px;
+		left: 28px;
+		z-index: 12;
+		width: 96px;
+		height: 96px;
+		border-radius: 50%;
+		background: rgba(10, 10, 10, 0.55);
+		border: 1px solid rgba(215, 38, 56, 0.3);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.25s ease;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		touch-action: none;
+	}
+
+	.explore-active .mobile-joystick {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.mobile-joystick__knob {
+		width: 28px;
+		height: 28px;
+		border-radius: 50%;
+		background: rgba(215, 38, 56, 0.7);
+		box-shadow: 0 0 10px rgba(215, 38, 56, 0.4);
+		transform: translate(0px, 0px);
+		transition: transform 0.05s ease;
+		pointer-events: none;
+	}
+}

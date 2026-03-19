@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview A — Oxide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@75..150,100..900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+:root {
+	--red: #c41e2a;
+	--white: #e0ddd5;
+	--muted: rgba(224, 221, 213, 0.5);
+	--bg: #050505;
+}
+
+body {
+	background: var(--bg);
+	color: var(--white);
+	font-family: "Anybody", sans-serif;
+	min-height: 100vh;
+	overflow-x: hidden;
+}
+
+/* Grain */
+body::after {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 100;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+	opacity: 0.06;
+	mix-blend-mode: overlay;
+}
+
+/* ---- NAV ---- */
+.nav {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	padding: 2rem 2.5rem;
+}
+
+.nav-name {
+	font-weight: 800;
+	font-size: 1.8rem;
+	font-stretch: 85%;
+	letter-spacing: -0.02em;
+	color: #fff;
+}
+
+.nav-sub {
+	font-weight: 300;
+	font-size: 0.75rem;
+	font-stretch: 120%;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin-left: 1rem;
+}
+
+.nav-links {
+	display: flex;
+	gap: 0;
+	list-style: none;
+	padding: 0;
+}
+
+.nav-links a {
+	display: block;
+	padding: 0.4rem 1.2rem;
+	color: var(--muted);
+	font-weight: 400;
+	font-size: 0.85rem;
+	font-stretch: 110%;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--white); }
+
+.nav-links a.active {
+	color: #fff;
+	border-bottom: 3px solid var(--red);
+}
+
+/* ---- PANEL ---- */
+.scene {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	padding: 6rem 3rem 3rem;
+	/* Simulated 3D background */
+	background:
+		radial-gradient(ellipse at 70% 40%, rgba(20, 20, 25, 0.9) 0%, transparent 60%),
+		radial-gradient(ellipse at 30% 60%, rgba(15, 10, 12, 0.5) 0%, transparent 50%),
+		var(--bg);
+}
+
+.panel {
+	width: 680px;
+	max-height: 80vh;
+	padding: 3.5rem 3rem 3rem;
+	background: rgba(5, 5, 5, 0.92);
+	border-left: 3px solid var(--red);
+	overflow-y: auto;
+}
+
+.eyebrow {
+	font-weight: 300;
+	font-size: 0.7rem;
+	font-stretch: 130%;
+	letter-spacing: 0.3em;
+	text-transform: uppercase;
+	color: var(--red);
+	margin-bottom: 1.2rem;
+}
+
+.title {
+	font-weight: 800;
+	font-size: 3.2rem;
+	font-stretch: 75%;
+	letter-spacing: -0.03em;
+	line-height: 1;
+	color: #fff;
+	margin-bottom: 2rem;
+}
+
+.content {
+	font-weight: 300;
+	font-size: 1rem;
+	font-stretch: 105%;
+	line-height: 1.8;
+	color: var(--muted);
+}
+
+.content p { margin-bottom: 1.2rem; }
+
+.content a {
+	color: var(--white);
+	text-decoration: none;
+	border-bottom: 1px solid var(--red);
+}
+
+.divider {
+	border: none;
+	border-top: 1px solid rgba(255,255,255,0.06);
+	margin: 2rem 0;
+}
+
+/* ---- CARDS ---- */
+.card {
+	padding: 1.2rem 0;
+	border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.card-date {
+	font-weight: 300;
+	font-size: 0.7rem;
+	font-stretch: 130%;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--red);
+	margin-bottom: 0.3rem;
+}
+
+.card-title {
+	font-weight: 600;
+	font-size: 1.1rem;
+	font-stretch: 90%;
+	color: #fff;
+}
+
+.card-meta {
+	font-weight: 300;
+	font-size: 0.85rem;
+	color: var(--muted);
+	margin-top: 0.2rem;
+}
+
+/* ---- PLAYER ---- */
+.player {
+	position: fixed;
+	bottom: 1.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 0.7rem 1.5rem;
+	background: rgba(5, 5, 5, 0.95);
+	border-left: 2px solid var(--red);
+}
+
+.player-btn {
+	width: 32px;
+	height: 32px;
+	border: none;
+	background: transparent;
+	color: #fff;
+	cursor: pointer;
+	font-size: 1.2rem;
+}
+
+.player-bar {
+	width: 200px;
+	height: 1px;
+	background: rgba(255,255,255,0.1);
+	position: relative;
+}
+
+.player-bar::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 35%;
+	height: 100%;
+	background: var(--white);
+}
+
+.player-time {
+	font-size: 0.7rem;
+	font-stretch: 120%;
+	letter-spacing: 0.1em;
+	color: var(--muted);
+}
+
+/* ---- VISITOR DATA ---- */
+.visitor {
+	position: fixed;
+	bottom: 5rem;
+	right: 2rem;
+	font-family: "Courier New", monospace;
+	font-size: 0.65rem;
+	line-height: 1.6;
+	color: rgba(196, 30, 42, 0.3);
+	text-align: right;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+	<div>
+		<span class="nav-name">Louis Navarro</span>
+		<span class="nav-sub">Contrebassiste, créateur numérique</span>
+	</div>
+	<ul class="nav-links">
+		<li><a href="#" class="active">Accueil</a></li>
+		<li><a href="#">À propos</a></li>
+		<li><a href="#">Productions</a></li>
+		<li><a href="#">Actus</a></li>
+		<li><a href="#">Contact</a></li>
+	</ul>
+</nav>
+
+<div class="scene">
+	<div class="panel">
+		<p class="eyebrow">Biographie</p>
+		<h2 class="title">À propos</h2>
+		<div class="content">
+			<p>Louis Navarro est contrebassiste, improvisateur et créateur numérique. Son travail explore les territoires entre musique acoustique, synthèse sonore et arts visuels génératifs.</p>
+			<p>Formé au conservatoire puis aux pratiques expérimentales, il développe une approche hybride où l'instrument dialogue avec le code, le traitement temps réel et l'espace scénique.</p>
+			<hr class="divider">
+			<div class="card">
+				<p class="card-date">22 mars 2026</p>
+				<p class="card-title">Festival Présences Électroniques</p>
+				<p class="card-meta">Paris — Gaîté Lyrique</p>
+			</div>
+			<div class="card">
+				<p class="card-date">15 avril 2026</p>
+				<p class="card-title">Concert solo — Contrebasse + RNBO</p>
+				<p class="card-meta">Lyon — Le Périscope</p>
+			</div>
+			<div class="card">
+				<p class="card-date">03 mai 2026</p>
+				<p class="card-title">Installation audiovisuelle</p>
+				<p class="card-meta">Marseille — Friche Belle de Mai</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="player">
+	<button class="player-btn">▶</button>
+	<div class="player-bar"></div>
+	<span class="player-time">1:24 / 4:07</span>
+</div>
+
+<div class="visitor">
+	SYS 2026.03.17<br>
+	RES 1920×1080<br>
+	GPU WebGPU<br>
+	RNBO ▮▮▮▮▯▯ 0.34
+</div>
+
+</body>
+</html>
