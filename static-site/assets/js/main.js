@@ -2222,10 +2222,10 @@ function initCameraDebug() {
 
 	const views = cameraViewsMobile;
 	const axes = [
-		{ key: 'x',    target: 'position', min: -80,  max: 80,  step: 0.5  },
-		{ key: 'y',    target: 'position', min: -40,  max: 80,  step: 0.5  },
-		{ key: 'z',    target: 'position', min: -80,  max: 80,  step: 0.5  },
-		{ key: 'rotY', target: 'rotation', min: -3.2, max: 3.2, step: 0.01 },
+		{ key: 'x',    target: 'position', min: -80,  max: 80,  step: 0.1   },
+		{ key: 'y',    target: 'position', min: -40,  max: 80,  step: 0.1   },
+		{ key: 'z',    target: 'position', min: -80,  max: 80,  step: 0.1   },
+		{ key: 'rotY', target: 'rotation', min: -3.2, max: 3.2, step: 0.001 },
 	];
 
 	const panel = document.createElement('div');
