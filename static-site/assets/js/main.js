@@ -2309,6 +2309,11 @@ function initCameraDebug() {
 			title.textContent = '📷 ' + activePageId;
 			const view = views[activePageId];
 			if (view) {
+				const range = 10, rangeR = 0.3;
+				sliders.x.min = view.position.x - range;  sliders.x.max = view.position.x + range;
+				sliders.y.min = view.position.y - range;  sliders.y.max = view.position.y + range;
+				sliders.z.min = view.position.z - range;  sliders.z.max = view.position.z + range;
+				sliders.rotY.min = view.rotation.y - rangeR; sliders.rotY.max = view.rotation.y + rangeR;
 				sliders.x.value    = view.position.x;
 				sliders.y.value    = view.position.y;
 				sliders.z.value    = view.position.z;
