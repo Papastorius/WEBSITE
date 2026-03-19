@@ -2222,10 +2222,10 @@ function initCameraDebug() {
 
 	const views = cameraViewsMobile;
 	const axes = [
-		{ key: 'x',    target: 'position', min: -80,  max: 80,  step: 0.5  },
-		{ key: 'y',    target: 'position', min: -40,  max: 80,  step: 0.5  },
-		{ key: 'z',    target: 'position', min: -80,  max: 80,  step: 0.5  },
-		{ key: 'rotY', target: 'rotation', min: -3.2, max: 3.2, step: 0.01 },
+		{ key: 'x',    target: 'position', min: -15,  max: 15,  step: 0.05   },
+		{ key: 'y',    target: 'position', min: -15,  max: 15,  step: 0.05   },
+		{ key: 'z',    target: 'position', min: -15,  max: 15,  step: 0.05   },
+		{ key: 'rotY', target: 'rotation', min: -0.5, max: 0.5, step: 0.0005 },
 	];
 
 	const panel = document.createElement('div');
@@ -2233,7 +2233,7 @@ function initCameraDebug() {
 		position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
 		background: rgba(0,0,0,0.88); color: #fff; font-family: monospace;
 		font-size: 13px; padding: 12px 16px; border-radius: 8px;
-		border: 1px solid #555; z-index: 9999; width: 310px;
+		border: 1px solid #555; z-index: 9999; width: 600px;
 	`;
 
 	const title = document.createElement('div');
