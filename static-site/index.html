@@ -9,7 +9,7 @@
 
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=VT323&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@100..900&family=VT323&display=swap" rel="stylesheet">
 
 	<link rel="stylesheet" href="assets/css/immersive.css">
 </head>
@@ -21,11 +21,44 @@
 	<!-- Loading screen -->
 	<div class="immersive-loader" data-loading-screen>
 		<div class="immersive-loader__panel">
-			<p class="immersive-loader__eyebrow">Louis Navarro</p>
-			<h1 class="immersive-loader__title">Chargement de la scène</h1>
+			<div class="immersive-loader__signal">
+				<span class="immersive-loader__dot"></span>
+			</div>
+			<h1 class="immersive-loader__name" data-loader-decode="Louis Navarro"></h1>
 			<div class="immersive-loader__bar"><div class="immersive-loader__progress"></div></div>
+			<p class="immersive-loader__prompt"><span class="immersive-loader__caret">&gt;</span> entering room<span class="immersive-loader__cursor">_</span></p>
 		</div>
 	</div>
+	<script>
+	(function(){
+		var el = document.querySelector('[data-loader-decode]');
+		if (!el) return;
+		var text = el.dataset.loaderDecode;
+		var stages = ['░','▒','▓','█'];
+		var len = text.length;
+		var delays = [];
+		for (var i = 0; i < len; i++) delays[i] = Math.random() * 1200 + 600;
+		var start = Date.now();
+		function tick() {
+			var now = Date.now() - start;
+			var out = '';
+			var done = true;
+			for (var i = 0; i < len; i++) {
+				if (text[i] === ' ') { out += ' '; continue; }
+				var progress = now / delays[i];
+				if (progress >= 1) { out += text[i]; }
+				else {
+					var idx = Math.min(Math.floor(progress * stages.length), stages.length - 1);
+					out += stages[idx];
+					done = false;
+				}
+			}
+			el.textContent = out;
+			if (!done) requestAnimationFrame(tick);
+		}
+		requestAnimationFrame(tick);
+	})();
+	</script>
 
 	<!-- Header — matching original site -->
 	<header class="immersive-nav">
@@ -77,11 +110,34 @@
 		<section id="page-accueil" class="immersive-page immersive-page--home is-active" data-slug="accueil">
 			<div class="immersive-page__panel immersive-page__panel--home">
 
-				<!-- Projet mis en avant -->
-				<div class="home-highlight" data-home-highlight></div>
+				<!-- Identity block -->
+				<div class="home-identity">
+					<div class="home-identity__signal">
+						<span class="home-identity__dot"></span>
+						<span class="home-identity__status">signal actif</span>
+					</div>
+					<h1 class="home-identity__name">Louis<br>Navarro</h1>
+					<p class="home-identity__role">Contrebassiste <span class="home-identity__x">×</span> Créateur numérique</p>
+				</div>
 
-				<!-- Vidéos -->
-				<div class="home-videos" data-home-videos></div>
+				<!-- Statement -->
+				<blockquote class="home-statement">
+					Le son comme matière.<br>Le geste comme signal.
+				</blockquote>
+
+				<!-- Divider -->
+				<div class="home-rule" aria-hidden="true"></div>
+
+				<!-- Latest release -->
+				<div class="home-release" data-home-release></div>
+
+				<!-- Next concert -->
+				<div class="home-next-date" data-home-next-date></div>
+
+				<!-- Navigation hint -->
+				<p class="home-nav-hint">
+					<span class="home-nav-hint__caret">></span> <span class="home-nav-hint__text" data-home-hint>naviguer pour découvrir</span><span class="home-nav-hint__cursor">_</span>
+				</p>
 
 			</div>
 		</section>
@@ -89,7 +145,7 @@
 		<section id="page-bio" class="immersive-page" data-slug="bio">
 			<div class="immersive-page__panel">
 				<div class="panel-header">
-					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">~/bio</span></div>
+					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">à propos</span></div>
 					<span class="panel-header__meta">01</span>
 				</div>
 				<div class="panel-body">
@@ -104,19 +160,24 @@
 		<section id="page-projets" class="immersive-page" data-slug="projets">
 			<div class="immersive-page__panel">
 				<div class="panel-header">
-					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">~/projets</span></div>
+					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">productions</span></div>
 					<span class="panel-header__meta">02</span>
 				</div>
 				<div class="panel-body">
 					<h2 class="immersive-page__title">Productions</h2>
 					<div class="projets-tabs">
 						<button class="projets-tab is-active" data-projets-tab="musique">Musique</button>
+						<button class="projets-tab" data-projets-tab="live">Live</button>
 						<button class="projets-tab" data-projets-tab="numerique">Numérique</button>
 					</div>
 					<div class="projets-tab-content is-active" data-projets-panel="musique">
+						<div class="home-highlight" data-home-highlight></div>
 						<div class="immersive-page__content" data-immersive-page-content>
 							<p>Chargement...</p>
 						</div>
+					</div>
+					<div class="projets-tab-content" data-projets-panel="live">
+						<div class="home-videos" data-home-videos></div>
 					</div>
 					<div class="projets-tab-content" data-projets-panel="numerique">
 						<div class="immersive-page__content" data-projets-creations>
@@ -130,7 +191,7 @@
 		<section id="page-actus" class="immersive-page" data-slug="actus">
 			<div class="immersive-page__panel">
 				<div class="panel-header">
-					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">~/agenda</span></div>
+					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">dates</span></div>
 					<span class="panel-header__meta">03</span>
 				</div>
 				<div class="panel-body">
@@ -153,7 +214,7 @@
 		<section id="page-contact" class="immersive-page" data-slug="contact">
 			<div class="immersive-page__panel">
 				<div class="panel-header">
-					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">~/contact</span></div>
+					<div class="panel-header__left"><span class="panel-header__dot"></span><span class="panel-header__label">contact</span></div>
 					<span class="panel-header__meta">04</span>
 				</div>
 				<div class="panel-body">
@@ -213,6 +274,6 @@
 </div>
 
 <script src="assets/libs/rnbo.webaudio.js"></script>
-<script type="module" src="assets/js/main.js?v=2"></script>
+<script type="module" src="assets/js/main.js?v=34"></script>
 </body>
 </html>

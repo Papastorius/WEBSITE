@@ -209,11 +209,12 @@ function renderCreations(creations) {
 					<div class="home-video-item__embed">
 						<iframe
 							src="https://www.youtube.com/embed/${videoId}"
-							title="Création numérique"
+							title="${v.title || ''}"
 							frameborder="0"
 							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
 						></iframe>
 					</div>
+					<p class="home-video-item__title">${v.title || ''}</p>
 				</div>`;
 			}
 			if (v.type === 'vimeo' && v.url) {
@@ -224,11 +225,12 @@ function renderCreations(creations) {
 					<div class="home-video-item__embed">
 						<iframe
 							src="https://player.vimeo.com/video/${vimeoId}"
-							title="Création numérique"
+							title="${v.title || ''}"
 							frameborder="0"
 							allow="autoplay; fullscreen; picture-in-picture"
 						></iframe>
 					</div>
+					<p class="home-video-item__title">${v.title || ''}</p>
 				</div>`;
 			}
 			if (v.type === 'local' && v.src) {
@@ -315,6 +317,42 @@ function initPanelLinks() {
 	});
 }
 
+function renderHomeRelease(accueilData) {
+	const container = document.querySelector('[data-home-release]');
+	if (!container || !accueilData?.highlight) return;
+
+	const h = accueilData.highlight;
+	container.innerHTML = `
+		<span class="home-release__label">Dernière sortie</span>
+		<a class="home-release__card" href="${h.link}" target="_blank" rel="noopener">
+			<img class="home-release__img" src="${h.image}" alt="${h.artist} — ${h.title}">
+			<span class="home-release__info">
+				<span class="home-release__title">${h.artist} — ${h.title}</span>
+				<span class="home-release__meta">${h.year}</span>
+			</span>
+			<span class="home-release__cta">[ Écouter ]</span>
+		</a>
+	`;
+}
+
+function renderHomeNextDate(concerts) {
+	const container = document.querySelector('[data-home-next-date]');
+	if (!container || !concerts) return;
+
+	const upcoming = getUpcomingConcerts(concerts);
+	if (upcoming.length === 0) return;
+
+	const next = upcoming[0];
+	container.innerHTML = `
+		<span class="home-next-date__label">Prochain concert</span>
+		<div class="home-next-date__row">
+			<span class="home-next-date__date">${formatDate(next.start_datetime)}</span>
+			<span class="home-next-date__title">${next.title}</span>
+		</div>
+		${next.location ? `<span class="home-next-date__location">${next.location}</span>` : ''}
+	`;
+}
+
 function renderPageContent(sectionId, pageData) {
 	const section = document.querySelector(`#${sectionId} [data-immersive-page-content]`);
 	if (!section || !pageData) return;
@@ -347,7 +385,11 @@ export async function loadImmersiveContent() {
 	if (pages.accueil) {
 		renderHomeHighlight(pages.accueil);
 		renderHomeVideos(pages.accueil);
+		renderHomeRelease(pages.accueil);
 	}
+
+	// Render next concert on home
+	renderHomeNextDate(concerts);
 
 	// Render creations tab + init tabs
 	if (pages.projets?.creations) {

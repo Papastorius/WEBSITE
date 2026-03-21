@@ -9,17 +9,17 @@
     "creations": [
       { "type": "game", "url": "http://louis-navarro.com/ThreeJS/FordFocusTest/src/", "title": "Ford Focus 1999 — Le jeu vidéo", "description": "Jeu vidéo interactif basé sur le clip de daoud, réalisé en Three.js", "image": "uploads/2024/08/ford-focus-game-screenshot.png" },
       { "type": "youtube", "url": "https://www.youtube.com/watch?v=jO48WD_V4Nk", "title": "daoud — Ford Focus 1999 (clip)" },
-      { "type": "youtube", "url": "https://www.youtube.com/watch?v=5C66zGdashQ", "title": "Création numérique" },
-      { "type": "youtube", "url": "https://youtu.be/WVbPQj-37zA", "title": "Création numérique" },
-      { "type": "youtube", "url": "https://youtu.be/2jFx0rkUDHU", "title": "Création numérique" },
-      { "type": "youtube", "url": "https://youtu.be/SlaJbgvNKF4", "title": "Création numérique" },
-      { "type": "vimeo", "url": "https://vimeo.com/721090696", "title": "Création numérique" },
-      { "type": "youtube", "url": "https://www.youtube.com/watch?v=1gyJ-bJTeec", "title": "Création numérique" }
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=5C66zGdashQ", "title": "Qebrus Shape" },
+      { "type": "youtube", "url": "https://youtu.be/WVbPQj-37zA", "title": "ExploBass" },
+      { "type": "youtube", "url": "https://youtu.be/2jFx0rkUDHU", "title": "◈◉◊◇" },
+      { "type": "youtube", "url": "https://youtu.be/SlaJbgvNKF4", "title": "Ekko Teaser Turbolent" },
+      { "type": "vimeo", "url": "https://vimeo.com/721090696", "title": "∩ (phase de test)" },
+      { "type": "youtube", "url": "https://www.youtube.com/watch?v=1gyJ-bJTeec", "title": "IPIOI" }
     ]
   },
   "contact": {
     "title": "Contact",
-    "content": "<p class='contact-phone'>(+33) 6 29 02 81 53</p><p class='contact-email'><a href='mailto:louisnavarro.music@gmail.com'>louisnavarro.music@gmail.com</a></p><div class='contact-socials'><p class='contact-socials__label'>Retrouvez-moi</p><a href='https://www.instagram.com/louisnavarro.music/' target='_blank' rel='noopener'>Instagram</a><a href='https://www.youtube.com/@louisnavarro' target='_blank' rel='noopener'>YouTube</a></div>"
+    "content": "<p class='contact-phone'>(+33) 6 29 02 81 53</p><p class='contact-email'><a href='mailto:louisnavarro.music@gmail.com'>louisnavarro.music@gmail.com</a></p><div class='contact-socials'><p class='contact-socials__label'>Retrouvez-moi</p><a href='https://www.instagram.com/louisnavarro.music/' target='_blank' rel='noopener'>Instagram</a><a href='https://www.youtube.com/@louisnavarro' target='_blank' rel='noopener'>YouTube</a><a href='https://www.facebook.com/LouisNavarro.music' target='_blank' rel='noopener'>Facebook</a></div>"
   },
   "accueil": {
     "highlight": {
@@ -31,7 +31,6 @@
       "description": "Nouvel album de daoud — disponible maintenant"
     },
     "videos": [
-      { "type": "youtube", "url": "https://www.youtube.com/watch?v=jO48WD_V4Nk", "title": "daoud — Ford Focus 1999 (clip réalisé par Louis & Ulysse Navarro)", "link": { "url": "http://louis-navarro.com/ThreeJS/FordFocusTest/src/", "label": "[ > Jouer au jeu vidéo ]" } },
       { "type": "youtube", "url": "https://www.youtube.com/watch?v=6w4ymMz33n4", "title": "Live" },
       { "type": "youtube", "url": "https://www.youtube.com/watch?v=rhjIMy7UlTs", "title": "Live" },
       { "type": "youtube", "url": "https://www.youtube.com/watch?v=anXQ2HWnQts", "title": "Live" },

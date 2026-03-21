@@ -49,6 +49,7 @@ cssRenderer.domElement.style.top = '0';
 cssRenderer.domElement.style.left = '0';
 cssRenderer.domElement.style.pointerEvents = 'auto';
 cssRenderer.domElement.style.zIndex = '3';
+cssRenderer.domElement.style.visibility = 'hidden';
 document.body.appendChild(cssRenderer.domElement);
 
 // Forward pointer events from CSS3D container to Three.js canvas
@@ -125,23 +126,23 @@ const cameraViewsDesktop = {
 
 const cameraViewsMobile = {
 	'page-accueil': {
-		position: { x: -4, y: -4, z: 30 },
-		rotation: { x: 0, y: 0, z: 0 },
+		position: { x: 9.5, y: -28.36, z: 31 },
+		rotation: { x: 0, y: 0.09, z: 0 },
 	},
 	'page-bio': {
-		position: { x: -33, y: 25, z: 32 },
+		position: { x: -35.5, y: 25, z: 31.5 },
 		rotation: { x: 0, y: 1.5, z: 0 },
 	},
 	'page-projets': {
-		position: { x: 24, y: 10, z: 8 },
-		rotation: { x: -0.08, y: -1.08, z: 0 },
+		position: { x: 29, y: 10.5, z: 13.5 },
+		rotation: { x: 0, y: -0.71, z: 0 },
 	},
 	'page-contact': {
-		position: { x: -16, y: 8, z: 8 },
-		rotation: { x: -0.04, y: 3.02, z: 0 },
+		position: { x: -13.5, y: 10, z: 6.5 },
+		rotation: { x: 0, y: 3.02, z: 0 },
 	},
 	'page-actus': {
-		position: { x: -38, y: -15, z: -28 },
+		position: { x: -36, y: -14.5, z: -28.5 },
 		rotation: { x: 0, y: 1.5, z: 0 },
 	},
 };
@@ -377,6 +378,8 @@ function initMobileNav() {
 }
 
 async function bootstrap() {
+	const bootstrapStart = Date.now();
+	const LOADER_MIN_MS = 2500;
 	try {
 		setProgress(10);
 
@@ -411,6 +414,9 @@ async function bootstrap() {
 		window.addEventListener('resize', onWindowResize);
 		initializeNavigation();
 		initExploreMode();
+		// Set home hint text based on device
+		const homeHint = document.querySelector('[data-home-hint]');
+		if (homeHint && _isMobile) homeHint.textContent = 'swiper pour découvrir';
 		setActivePage(document.querySelector('.immersive-page.is-active')?.id ?? 'page-accueil');
 		onWindowResize();
 		controls.syncFromCamera();
@@ -421,6 +427,10 @@ async function bootstrap() {
 		console.error('Immersive bootstrap failed.', error);
 		showBootError();
 	} finally {
+		const elapsed = Date.now() - bootstrapStart;
+		const remaining = Math.max(0, LOADER_MIN_MS - elapsed);
+		if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
+		cssRenderer.domElement.style.visibility = 'visible';
 		document.body.classList.add('immersive-ready');
 		loadingScreen?.classList.add('is-hidden');
 	}
@@ -629,9 +639,10 @@ async function setupWorld() {
 	videoPanel = createVideoPanel();
 	if (videoPanel) {
 		// Place in world space — floating to the right, foreground
-		videoPanel.position.set(15, 2, -20);
+		videoPanel.position.set(isMobile() ? 0 : 15, -20, -20);
 		scene.add(videoPanel);
 	}
+
 
 	buildFaceNormals();
 
@@ -774,7 +785,7 @@ function createVideoPanel() {
 	videoTexture.generateMipmaps = false;
 
 	const ratio = 16 / 9;
-	const width = isMobile() ? 8 : 15;
+	const width = 40;
 	const height = width / ratio;
 	const frameDepth = 0.4;
 	const frameBorder = 0.35;
@@ -2094,7 +2105,6 @@ function updatePanelCrossfade(elapsed) {
 	}
 }
 
-
 function animate() {
 	requestAnimationFrame(animate);
 	const delta = Math.min(clock.getDelta(), 1 / 20);
@@ -2112,16 +2122,14 @@ function animate() {
 	if (videoPanel) {
 		const mobile = _isMobile;
 		const driftScale = mobile ? 0.5 : 1;
-		// Gentle drift — stays mostly to the right, closer to camera
-		videoPanel.position.x = (mobile ? 8 : 15) + Math.sin(elapsed * 0.05) * 5 * driftScale;
-		videoPanel.position.y = 2 + Math.cos(elapsed * 0.04) * 3 * driftScale;
+		videoPanel.position.x = (mobile ? 11 : 15) + Math.sin(elapsed * 0.05) * 5 * driftScale;
+		videoPanel.position.y = (mobile ? -18 : 2) + Math.cos(elapsed * 0.04) * 3 * driftScale;
 		videoPanel.position.z = (mobile ? -15 : -20) + Math.sin(elapsed * 0.03) * 4 * driftScale;
 		// Subtle rotation
 		videoPanel.rotation.y = Math.sin(elapsed * 0.06) * 0.2;
 		videoPanel.rotation.x = Math.cos(elapsed * 0.05) * 0.08;
 		videoPanel.rotation.z = Math.sin(elapsed * 0.04) * 0.04;
-		// Scale pulses with audio
-		const baseScale = mobile ? 1.5 : 2.5;
+		const baseScale = mobile ? 1.0 : 2.5;
 		videoPanel.scale.setScalar(baseScale + glowCurrent * (mobile ? 2 : 4));
 	}
 

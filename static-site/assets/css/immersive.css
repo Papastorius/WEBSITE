@@ -15,6 +15,8 @@
 	--panel-bg-strong: rgba(10, 10, 10, 0.96);
 	--mono: "Geist Mono", "SF Mono", "Consolas", monospace;
 	--data: "VT323", "Courier New", monospace;
+	--serif: "DM Serif Display", "Georgia", serif;
+	--body: "DM Sans", "Helvetica Neue", sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -111,17 +113,23 @@ body.immersive-template canvas {
 	pointer-events: none;
 }
 
-/* ---- Loader ---- */
+/* Hide UI until loader is done */
+body:not(.immersive-ready) .immersive-nav,
+body:not(.immersive-ready) .rnbo-player {
+	visibility: hidden;
+}
+
+/* ---- Loader — installation threshold ---- */
 
 .immersive-loader {
 	position: fixed;
 	inset: 0;
-	z-index: 9;
+	z-index: 100;
 	display: grid;
 	place-items: center;
 	padding: 2rem;
 	background: var(--bg);
-	transition: opacity 0.8s ease, visibility 0.8s ease;
+	transition: opacity 1s ease, visibility 1s ease;
 }
 
 .immersive-loader.is-hidden,
@@ -132,40 +140,95 @@ body.immersive-ready .immersive-loader {
 }
 
 .immersive-loader__panel {
-	max-width: 28rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0;
 	text-align: center;
 }
 
-.immersive-loader__eyebrow {
-	margin: 0 0 1rem;
-	font-size: 0.75rem;
-	letter-spacing: 0.2em;
-	text-transform: uppercase;
-	color: var(--muted);
+/* ---- Signal indicator — top ---- */
+.immersive-loader__signal {
+	display: flex;
+	align-items: center;
+	margin-bottom: 2rem;
+	animation: loader-reveal 0.6s ease both 0.2s;
 }
 
-.immersive-loader__title {
-	margin: 0 0 1.5rem;
-	font-weight: 300;
-	font-size: clamp(1.6rem, 4vw, 2.4rem);
-	letter-spacing: 0.08em;
+.immersive-loader__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--accent);
+	box-shadow: 0 0 10px rgba(215, 38, 56, 0.6), 0 0 20px rgba(215, 38, 56, 0.2);
+	outline: 1px solid rgba(215, 38, 56, 0.15);
+	outline-offset: 4px;
+	animation: loader-dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes loader-dot-pulse {
+	0%, 100% { opacity: 0.6; transform: scale(0.9); }
+	50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ---- Name — center presence, no reveal (decode IS the reveal) ---- */
+.immersive-loader__name {
+	margin: 0 0 2.4rem;
+	font-weight: 200;
+	font-size: clamp(1.8rem, 7vw, 3.2rem);
+	letter-spacing: 0.18em;
 	text-transform: uppercase;
-	line-height: 1.1;
+	line-height: 1;
 	color: #fff;
 }
 
+/* ---- Progress — red signal line ---- */
 .immersive-loader__bar {
-	width: 100%;
+	width: min(240px, 55vw);
 	height: 1px;
-	background: var(--line);
+	background: rgba(255, 255, 255, 0.05);
 	overflow: hidden;
+	position: relative;
+	margin-bottom: 1rem;
+	animation: loader-reveal 0.6s ease both 0.4s;
 }
 
 .immersive-loader__progress {
 	width: 0%;
 	height: 100%;
 	background: var(--accent);
+	box-shadow: 0 0 6px rgba(215, 38, 56, 0.35);
 	transition: width 0.3s ease;
+}
+
+/* ---- Prompt — terminal threshold ---- */
+.immersive-loader__prompt {
+	margin: 0;
+	font-family: var(--mono);
+	font-size: 0.65rem;
+	letter-spacing: 0.06em;
+	color: var(--muted);
+	animation: loader-reveal 0.6s ease both 0.8s;
+}
+
+.immersive-loader__caret {
+	color: var(--accent);
+}
+
+.immersive-loader__cursor {
+	color: var(--accent);
+	animation: loader-cursor-blink 1s steps(1) infinite;
+}
+
+/* ---- Loader keyframes ---- */
+@keyframes loader-reveal {
+	from { opacity: 0; transform: translateY(5px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes loader-cursor-blink {
+	0%, 49% { opacity: 1; }
+	50%, 100% { opacity: 0; }
 }
 
 /* ============================================================
@@ -577,9 +640,11 @@ body.immersive-ready .immersive-loader {
 
 /* Bio statement */
 .bio-statement {
+	font-family: var(--serif);
 	font-size: 1.8rem;
-	font-weight: 300;
-	line-height: 1.6;
+	font-weight: 400;
+	font-style: italic;
+	line-height: 1.5;
 	color: #fff;
 	margin-bottom: 1.5rem;
 	padding-bottom: 1.2rem;
@@ -1171,11 +1236,14 @@ body.immersive-ready .immersive-loader {
 .immersive-page__panel--home {
 	display: flex;
 	flex-direction: column;
-	gap: 2rem;
-	padding: 32px;
-	max-height: 1100px;
+	justify-content: center;
+	gap: 0;
+	padding: 60px 56px;
+	max-height: 1600px;
 	overflow-y: auto;
 	overscroll-behavior: contain;
+	border: 1px solid rgba(215, 38, 56, 0.2);
+	background: rgba(10, 10, 10, 0.88);
 }
 
 .immersive-page__panel--home .immersive-page__content {
@@ -1187,6 +1255,232 @@ body.immersive-ready .immersive-loader {
 
 .immersive-page__panel--home .concerts-panel {
 	margin-top: 0;
+}
+
+/* ---- Home: Identity block ---- */
+
+.home-identity {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	margin-bottom: 2.5rem;
+}
+
+.home-identity__signal {
+	display: flex;
+	align-items: center;
+	gap: 0.6em;
+	margin-bottom: 1.8rem;
+}
+
+.home-identity__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--accent);
+	box-shadow: 0 0 8px rgba(215, 38, 56, 0.5);
+	animation: loader-dot-pulse 2.5s ease-in-out infinite;
+}
+
+.home-identity__status {
+	font-size: 0.7rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: rgba(215, 38, 56, 0.7);
+}
+
+.home-identity__name {
+	margin: 0;
+	font-family: var(--mono);
+	font-weight: 200;
+	font-size: 6rem;
+	line-height: 0.92;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: #fff;
+	text-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+.home-identity__role {
+	margin: 1.4rem 0 0;
+	font-size: 1.15rem;
+	font-weight: 300;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--muted);
+	line-height: 1.6;
+}
+
+.home-identity__x {
+	color: var(--accent);
+	font-weight: 400;
+	padding: 0 0.15em;
+}
+
+/* ---- Home: Statement ---- */
+
+.home-statement {
+	margin: 0 0 2.5rem;
+	padding: 0;
+	border: none;
+	font-family: var(--serif);
+	font-size: 2.2rem;
+	font-weight: 400;
+	font-style: italic;
+	line-height: 1.4;
+	color: rgba(255, 255, 255, 0.85);
+	letter-spacing: 0.01em;
+	text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* ---- Home: Divider rule ---- */
+
+.home-rule {
+	width: 100%;
+	height: 1px;
+	background: linear-gradient(
+		to right,
+		rgba(215, 38, 56, 0.4),
+		rgba(215, 38, 56, 0.08) 60%,
+		transparent
+	);
+	margin-bottom: 2rem;
+}
+
+/* ---- Home: Latest release ---- */
+
+.home-release {
+	margin-bottom: 1.8rem;
+}
+
+.home-release__label {
+	display: block;
+	font-size: 0.6rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: rgba(215, 38, 56, 0.85);
+	margin-bottom: 0.7rem;
+	text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.home-release__card {
+	display: flex;
+	align-items: center;
+	gap: 1.2rem;
+	padding: 1rem 1.2rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(10, 10, 10, 0.75);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	text-decoration: none;
+	color: inherit;
+	transition: border-color 0.2s, background 0.2s;
+}
+
+.home-release__card:hover {
+	border-color: rgba(215, 38, 56, 0.3);
+	background: rgba(215, 38, 56, 0.04);
+}
+
+.home-release__img {
+	width: 4.5rem;
+	height: 4.5rem;
+	object-fit: cover;
+	flex-shrink: 0;
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.home-release__info {
+	flex: 1;
+	min-width: 0;
+}
+
+.home-release__title {
+	margin: 0;
+	font-size: 1.2rem;
+	font-weight: 500;
+	color: #fff;
+	line-height: 1.3;
+}
+
+.home-release__meta {
+	margin: 0.2rem 0 0;
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+
+.home-release__cta {
+	font-size: 0.8rem;
+	color: var(--accent);
+	letter-spacing: 0.06em;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+/* ---- Home: Next date ---- */
+
+.home-next-date {
+	margin-bottom: 2rem;
+}
+
+.home-next-date__label {
+	display: block;
+	font-size: 0.6rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: rgba(215, 38, 56, 0.85);
+	margin-bottom: 0.5rem;
+	text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.home-next-date__row {
+	display: flex;
+	align-items: baseline;
+	gap: 1rem;
+	padding: 0.7rem 1rem;
+	background: rgba(10, 10, 10, 0.75);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.home-next-date__date {
+	font-size: 1rem;
+	color: var(--muted);
+	letter-spacing: 0.04em;
+	flex-shrink: 0;
+}
+
+.home-next-date__title {
+	font-size: 1.1rem;
+	font-weight: 500;
+	color: #fff;
+}
+
+.home-next-date__location {
+	font-size: 0.85rem;
+	color: var(--muted);
+	margin-top: 0.15rem;
+}
+
+/* ---- Home: Nav hint ---- */
+
+.home-nav-hint {
+	margin: 0;
+	font-size: 0.65rem;
+	letter-spacing: 0.06em;
+	color: var(--muted);
+	opacity: 0.8;
+	text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.home-nav-hint__caret {
+	color: var(--accent);
+}
+
+.home-nav-hint__cursor {
+	color: var(--accent);
+	animation: loader-cursor-blink 1s steps(1) infinite;
 }
 
 /* ============================================================
@@ -1706,28 +2000,142 @@ body.immersive-ready .immersive-loader {
 
 	.immersive-page__panel--home {
 		max-height: 1066px;
-		padding: 20px;
+		padding: 36px 28px 28px;
+		justify-content: center;
+	}
+
+	/* ---- Home: Identity ---- */
+	.home-identity {
+		margin-bottom: 1.6rem;
+	}
+
+	.home-identity__signal {
+		margin-bottom: 1.2rem;
+	}
+
+	.home-identity__dot {
+		width: 5px;
+		height: 5px;
+	}
+
+	.home-identity__status {
+		font-size: 0.5rem;
+		letter-spacing: 0.18em;
+	}
+
+	.home-identity__name {
+		font-size: 3.6rem;
+		letter-spacing: 0.06em;
+		line-height: 0.9;
+	}
+
+	.home-identity__role {
+		margin-top: 1rem;
+		font-size: 1rem;
+		letter-spacing: 0.1em;
+	}
+
+	/* ---- Home: Statement ---- */
+	.home-statement {
+		font-size: 1.6rem;
+		margin-bottom: 1.6rem;
+		padding-left: 1.4rem;
+		line-height: 1.4;
+	}
+
+	.home-statement__mark {
+		font-size: 3rem;
+		left: -0.05em;
+		top: -0.2em;
+	}
+
+	/* ---- Home: Rule ---- */
+	.home-rule {
+		margin-bottom: 1.4rem;
+	}
+
+	/* ---- Home: Release ---- */
+	.home-release {
+		margin-bottom: 1.2rem;
+	}
+
+	.home-release__label {
+		font-size: 0.7rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.home-release__card {
+		padding: 0.8rem 1rem;
+		gap: 0.8rem;
+	}
+
+	.home-release__img {
+		width: 4rem;
+		height: 4rem;
+	}
+
+	.home-release__title {
+		font-size: 1.1rem;
+	}
+
+	.home-release__meta {
+		font-size: 0.85rem;
+	}
+
+	.home-release__cta {
+		font-size: 0.8rem;
+	}
+
+	/* ---- Home: Next date ---- */
+	.home-next-date {
+		margin-bottom: 1.4rem;
+	}
+
+	.home-next-date__label {
+		font-size: 0.7rem;
+	}
+
+	.home-next-date__date {
+		font-size: 1rem;
+	}
+
+	.home-next-date__title {
+		font-size: 1.05rem;
+	}
+
+	.home-next-date__location {
+		font-size: 0.85rem;
+	}
+
+	/* ---- Home: Nav hint ---- */
+	.home-nav-hint {
+		font-size: 0.7rem;
+	}
+
+	.home-nav-hint__text {
+		letter-spacing: 0.04em;
 	}
 
 	.panel-header {
-		padding: 8px 14px;
+		padding: 8px 16px;
 	}
 
-	.panel-header__label { font-size: 0.7rem; }
+	.panel-header__label { font-size: 0.75rem; }
 	.panel-header__meta { font-size: 0.55rem; }
 
 	.panel-body {
-		padding: 18px 18px 22px;
+		padding: 22px 22px 28px;
 	}
 
 	.immersive-page__title {
-		font-size: 1.6rem;
-		margin-bottom: 0.8rem;
+		font-size: 1.8rem;
+		margin-bottom: 1rem;
 	}
 
 	.immersive-page__content {
 		max-height: 800px;
-		font-size: 1rem;
+		font-size: 1.1rem;
+		line-height: 1.75;
 	}
 
 
@@ -1737,39 +2145,40 @@ body.immersive-ready .immersive-loader {
 
 	/* ---- Bio ---- */
 	.bio-statement {
-		font-size: 1.05rem;
-		padding-bottom: 0.6rem;
-		margin-bottom: 0.8rem;
+		font-size: 1.25rem;
+		line-height: 1.45;
+		padding-bottom: 0.8rem;
+		margin-bottom: 1rem;
 	}
 
 	/* ---- Projets tabs ---- */
 	.projets-tab {
-		padding: 0.4rem 0.6rem;
-		font-size: 0.8rem;
+		padding: 0.55rem 0.7rem;
+		font-size: 0.9rem;
 	}
 
 	/* ---- Concerts ---- */
-	.concerts-panel__title { font-size: 0.85rem; }
+	.concerts-panel__title { font-size: 0.9rem; }
 	.concert-card {
-		padding: 0.5rem 0;
-		grid-template-columns: 90px 1fr;
-		gap: 0.5rem;
+		padding: 0.6rem 0;
+		grid-template-columns: 100px 1fr;
+		gap: 0.6rem;
 	}
-	.concert-card__title { font-size: 0.9rem; }
-	.concert-card__date { font-size: 0.78rem; }
+	.concert-card__title { font-size: 1.05rem; }
+	.concert-card__date { font-size: 0.9rem; }
 	.concert-card__meta,
-	.concert-card__description { font-size: 0.78rem; }
+	.concert-card__description { font-size: 0.9rem; }
 
 	/* ---- Disco grid ---- */
 	.disco-grid {
-		grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
-		gap: 0.6rem;
+		grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+		gap: 0.7rem;
 	}
-	.disco-artist { font-size: 0.7rem; }
-	.disco-year { font-size: 0.55rem; }
+	.disco-artist { font-size: 0.85rem; }
+	.disco-year { font-size: 0.7rem; }
 	.disco-item a {
-		padding: 0.3rem 0.6rem;
-		font-size: 0.65rem;
+		padding: 0.35rem 0.7rem;
+		font-size: 0.75rem;
 	}
 
 	/* ---- Home highlight ---- */
@@ -1845,9 +2254,9 @@ body.immersive-ready .immersive-loader {
 	.visitor-data { display: none; }
 
 	.contact-phone,
-	.contact-email { font-size: 1rem; }
-	.contact-socials a { font-size: 1.1rem; margin-right: 1.2rem; }
-	.contact-socials__label { font-size: 0.65rem; }
+	.contact-email { font-size: 1.2rem; }
+	.contact-socials a { font-size: 1.2rem; margin-right: 1.2rem; }
+	.contact-socials__label { font-size: 0.75rem; }
 
 	::-webkit-scrollbar {
 		width: 6px;
