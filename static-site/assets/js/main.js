@@ -408,7 +408,16 @@ async function bootstrap() {
 		initializeListeners();
 
 		setProgress(95);
-		await renderer.init();
+		try {
+			await renderer.init();
+			console.log('Renderer backend:', navigator.gpu ? 'WebGPU' : 'WebGL (fallback)');
+		} catch (rendererError) {
+			console.warn('WebGPU init failed, retrying with WebGL fallback...', rendererError);
+			// Force WebGL backend if WebGPU fails
+			renderer.forceWebGL = true;
+			await renderer.init();
+			console.log('Renderer backend: WebGL (forced fallback)');
+		}
 
 		// Env map pour le clearcoat du dodecaèdre — après renderer.init()
 		if (mesh) {
@@ -1427,8 +1436,18 @@ function showBootError() {
 		return;
 	}
 
-	contentNode.innerHTML =
-		'<p class="immersive-error-message">Le chargement de la scène a échoué. Vérifie la console pour plus de détails.</p>';
+	const isWebGLSupported = (() => {
+		try {
+			const c = document.createElement('canvas');
+			return !!(c.getContext('webgl2') || c.getContext('webgl'));
+		} catch { return false; }
+	})();
+
+	const msg = !isWebGLSupported
+		? 'Ton navigateur ne supporte pas WebGL. Essaie avec Chrome, Firefox ou Edge récent.'
+		: 'Le chargement de la scène a échoué. Vérifie la console pour plus de détails.';
+
+	contentNode.innerHTML = `<p class="immersive-error-message">${msg}</p>`;
 }
 
 // ─── CRT Terminal Screens — créés au même emplacement que les CSS3D panels ───
