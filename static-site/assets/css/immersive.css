@@ -1999,22 +1999,22 @@ body.immersive-ready .immersive-loader {
 
 
 	/* ============================================================
-	   PANELS — 16:9 landscape ratio for mobile
+	   PANELS — 9:16 portrait ratio for mobile
 	   ============================================================ */
 	.immersive-page__panel {
-		width: 960px;
-		max-height: 540px; /* 960 × 9/16 */
+		width: 600px;
+		max-height: 1066px; /* 600 × 16/9 */
 	}
 
 	#page-projets .immersive-page__panel {
-		width: 960px;
+		width: 600px;
 	}
 
 	.immersive-page__panel--home {
 		justify-content: center;
 		gap: 0;
 		padding: 36px 28px 28px;
-		max-height: 540px;
+		max-height: 1066px;
 		border: 1px solid rgba(215, 38, 56, 0.2);
 		background: rgba(10, 10, 10, 0.88);
 	}
