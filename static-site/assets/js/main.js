@@ -139,7 +139,7 @@ const cameraViewsMobile = {
 		rotation: { x: 0, y: -0.71, z: 0 },
 	},
 	'page-contact': {
-		position: { x: -26.24, y: 3.78, z: 33 },
+		position: { x: -24.24, y: 3.78, z: 17 },
 		rotation: { x: 0, y: 3.02, z: 0 },
 	},
 	'page-actus': {
@@ -343,8 +343,11 @@ function initMobileNav() {
 		touchStartTime = Date.now();
 	}
 
+	let swipeHandled = false;
+
 	function onTouchEnd(e) {
 		if (!_isMobile) return;
+		if (swipeHandled) return;
 		if (e.changedTouches.length !== 1) return;
 		if (Date.now() - touchStartTime > SWIPE_MAX_MS) return;
 
@@ -353,6 +356,9 @@ function initMobileNav() {
 		const angle = Math.abs(Math.atan2(dy, dx) * (180 / Math.PI));
 		if (angle > ANGLE_LIMIT && angle < 180 - ANGLE_LIMIT) return;
 		if (Math.abs(dx) < SWIPE_THRESHOLD) return;
+
+		swipeHandled = true;
+		setTimeout(() => { swipeHandled = false; }, 100);
 
 		const currentIndex = PAGE_ORDER.indexOf(activePageId);
 
