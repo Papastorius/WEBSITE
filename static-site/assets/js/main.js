@@ -213,7 +213,7 @@ const panelPlacements = {
 	},
 	'page-contact': {
 		// Camera (-26.24, 3.78, 33) rotY 3.02 → panel just in front
-		position: { x: -24, y: 3.78, z: 5 },
+		position: { x: -24, y: 3.78, z: 25 },
 		rotation: { x: 0, y: 3.02, z: 0 },
 	},
 	'page-actus': {
