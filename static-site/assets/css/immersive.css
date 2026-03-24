@@ -1978,19 +1978,19 @@ body.immersive-ready .immersive-loader {
 		bottom: 0;
 		z-index: 14;
 		pointer-events: none;
-		width: 40px;
+		width: 60px;
 		opacity: 0;
-		transition: opacity 0.15s ease-out;
+		transition: opacity 0.12s ease-out;
 	}
 
 	.swipe-flash--left {
 		left: 0;
-		background: linear-gradient(to right, rgba(215, 38, 56, 0.5), transparent);
+		background: linear-gradient(to right, rgba(215, 38, 56, 0.7), transparent);
 	}
 
 	.swipe-flash--right {
 		right: 0;
-		background: linear-gradient(to left, rgba(215, 38, 56, 0.5), transparent);
+		background: linear-gradient(to left, rgba(215, 38, 56, 0.7), transparent);
 	}
 
 	.swipe-flash.is-flashing {

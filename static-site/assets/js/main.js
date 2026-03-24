@@ -330,22 +330,23 @@ function initMobileNav() {
 
 	let touchStartX = 0;
 	let touchStartY = 0;
-	let touchStartTarget = null;
-	const SWIPE_THRESHOLD = 50;
-	const ANGLE_LIMIT = 40;
+	let touchStartTime = 0;
+	const SWIPE_THRESHOLD = 30;
+	const ANGLE_LIMIT = 55;
+	const SWIPE_MAX_MS = 600;
 
 	function onTouchStart(e) {
 		if (!_isMobile) return;
 		if (e.touches.length !== 1) return;
 		touchStartX = e.touches[0].clientX;
 		touchStartY = e.touches[0].clientY;
-		touchStartTarget = e.target;
+		touchStartTime = Date.now();
 	}
 
 	function onTouchEnd(e) {
 		if (!_isMobile) return;
 		if (e.changedTouches.length !== 1) return;
-		if (touchStartTarget && touchStartTarget.closest('.immersive-page__panel')) return;
+		if (Date.now() - touchStartTime > SWIPE_MAX_MS) return;
 
 		const dx = e.changedTouches[0].clientX - touchStartX;
 		const dy = e.changedTouches[0].clientY - touchStartY;
@@ -370,7 +371,7 @@ function initMobileNav() {
 		}
 	}
 
-	[cssRenderer.domElement, renderer.domElement].forEach((el) => {
+	[cssRenderer.domElement, renderer.domElement, document.body].forEach((el) => {
 		el.addEventListener('touchstart', onTouchStart, { passive: true });
 		el.addEventListener('touchend', onTouchEnd, { passive: true });
 	});
