@@ -195,6 +195,8 @@ const proxyMeshes = [];
 const panelOpacity = {}; // { pageId: number } — opacité courante pour le fondu d'occlusion
 const crtScreens = {}; // { pageId: THREE.Mesh } — écrans CRT pour le fondu d'occlusion
 const crtAlbumPlanes = []; // planes d'albums attachés au CRT projets
+let _cachedProjetsImgs = null; // cached querySelectorAll for perf
+const _cachedPanelWorldPos = {}; // cached world positions for static panels
 let activePageId = 'page-accueil';
 let _isMobile = window.innerWidth < 680;
 
@@ -1769,7 +1771,7 @@ const MX_PLANE_H = 190;
 const MX_PLANE_W = MX_PLANE_H * (MX_COL_W / MX_COL_H);
 const MX_LAYERS = [
 	{
-		count: _isMobile ? 8 : 14,
+		count: _isMobile ? 4 : 14,
 		radiusMin: 10,
 		radiusMax: 20,
 		ySpread: 16,
@@ -1780,10 +1782,10 @@ const MX_LAYERS = [
 		speedMax: 18,
 		trailMin: 12,
 		trailMax: 20,
-		updateInterval: 1 / 30,
+		updateInterval: _isMobile ? 1 / 15 : 1 / 30,
 	},
 	{
-		count: _isMobile ? 8 : 18,
+		count: _isMobile ? 4 : 18,
 		radiusMin: 22,
 		radiusMax: 38,
 		ySpread: 24,
@@ -1794,10 +1796,10 @@ const MX_LAYERS = [
 		speedMax: 14,
 		trailMin: 10,
 		trailMax: 17,
-		updateInterval: 1 / 20,
+		updateInterval: _isMobile ? 1 / 10 : 1 / 20,
 	},
 	{
-		count: _isMobile ? 6 : 16,
+		count: _isMobile ? 3 : 16,
 		radiusMin: 40,
 		radiusMax: 62,
 		ySpread: 30,
@@ -1808,7 +1810,7 @@ const MX_LAYERS = [
 		speedMax: 11,
 		trailMin: 8,
 		trailMax: 14,
-		updateInterval: 1 / 14,
+		updateInterval: _isMobile ? 1 / 7 : 1 / 14,
 	},
 ];
 
@@ -1937,8 +1939,7 @@ function drawMatrixStrip(strip, delta) {
 		const y = ci * fontSize + fontSize * 0.52;
 
 		if (t === 0) {
-			ctx.shadowBlur = 12;
-			ctx.shadowColor = 'rgba(220, 255, 220, 0.95)';
+			if (!_isMobile) { ctx.shadowBlur = 12; ctx.shadowColor = 'rgba(220, 255, 220, 0.95)'; }
 			ctx.fillStyle = 'rgba(242, 255, 242, 0.98)';
 		} else {
 			const k = 1 - t / strip.trailLen;
@@ -1946,8 +1947,7 @@ function drawMatrixStrip(strip, delta) {
 			const r = Math.floor(6 + k * 18);
 			const g = Math.floor(96 + k * 150);
 			const b = Math.floor(10 + k * 26);
-			ctx.shadowBlur = t < 3 ? 5 : 0;
-			ctx.shadowColor = 'rgba(70, 255, 120, 0.32)';
+			if (!_isMobile) { ctx.shadowBlur = t < 3 ? 5 : 0; ctx.shadowColor = 'rgba(70, 255, 120, 0.32)'; }
 			ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
 		}
 
@@ -2074,7 +2074,8 @@ function updatePanelCrossfade(elapsed) {
 			panelOpacity[id] = 1;
 			// Reset child images opacity
 			if (id === 'page-projets') {
-				for (const img of cssObj.element.querySelectorAll('img')) {
+				if (!_cachedProjetsImgs) _cachedProjetsImgs = cssObj.element.querySelectorAll('img');
+				for (const img of _cachedProjetsImgs) {
 					img.style.opacity = '';
 				}
 			}
@@ -2093,7 +2094,11 @@ function updatePanelCrossfade(elapsed) {
 		if (id === 'page-accueil') continue;
 		if (!cssObj.visible) continue;
 
-		cssObj.getWorldPosition(_panelWorldPos);
+		if (!_cachedPanelWorldPos[id]) {
+			_cachedPanelWorldPos[id] = new THREE.Vector3();
+			cssObj.getWorldPosition(_cachedPanelWorldPos[id]);
+		}
+		_panelWorldPos.copy(_cachedPanelWorldPos[id]);
 
 		// 1. Proximité caméra → panneau
 		const camDist = camera.position.distanceTo(_panelWorldPos);
@@ -2125,7 +2130,8 @@ function updatePanelCrossfade(elapsed) {
 		const opStr = panelOpacity[id].toFixed(2);
 		cssObj.element.style.opacity = opStr;
 		if (id === 'page-projets') {
-			for (const img of cssObj.element.querySelectorAll('img')) {
+			if (!_cachedProjetsImgs) _cachedProjetsImgs = cssObj.element.querySelectorAll('img');
+			for (const img of _cachedProjetsImgs) {
 				img.style.opacity = opStr;
 			}
 		}
@@ -2191,17 +2197,20 @@ function animate() {
 		videoPanel.scale.setScalar(baseScale + glowCurrent * (mobile ? 2 : 4));
 	}
 
-	// CSS3D panels — sway rotation + micro-jitter (unstable signal)
-	for (const [id, cssObj] of Object.entries(cssPanels)) {
-		if (!cssObj.visible) continue;
-		const baseRotY = id === 'page-accueil' ? 0.08 : (panelPlacements[id]?.rotation.y ?? 0);
-		const baseRotX = id === 'page-accueil' ? 0 : (panelPlacements[id]?.rotation.x ?? 0);
-		const phase = id.length * 0.7;
-		cssObj.rotation.y = baseRotY + Math.sin(elapsed * 0.5 + phase) * 0.04;
-		cssObj.rotation.x = baseRotX + Math.cos(elapsed * 0.4 + phase) * 0.025;
+	// CSS3D panels — sway rotation + micro-jitter (desktop only — too expensive on mobile)
+	if (!_isMobile) {
+		for (const [id, cssObj] of Object.entries(cssPanels)) {
+			if (!cssObj.visible) continue;
+			const baseRotY = id === 'page-accueil' ? 0.08 : (panelPlacements[id]?.rotation.y ?? 0);
+			const baseRotX = id === 'page-accueil' ? 0 : (panelPlacements[id]?.rotation.x ?? 0);
+			const phase = id.length * 0.7;
+			cssObj.rotation.y = baseRotY + Math.sin(elapsed * 0.5 + phase) * 0.04;
+			cssObj.rotation.x = baseRotX + Math.cos(elapsed * 0.4 + phase) * 0.025;
+		}
 	}
 
-	// Image panels — audio-reactive opacity, emissive & scale
+	// Image panels — audio-reactive opacity, emissive & scale (every 2nd frame on mobile)
+	if (!_isMobile || Math.round(elapsed * 30) % 2 === 0)
 	for (const panel of imagePanels) {
 		const a = panel.userData.anim;
 		// Slow continuous rotation + sway (absolute, no accumulation)
@@ -2272,16 +2281,16 @@ function animate() {
 		rp.intensity = heartbeat + envCurrent * 4;
 	}
 
-	// Shadow light follows camera so shadows stay relevant
+	// Shadow light follows camera so shadows stay relevant (only when camera moves)
 	const sl = scene.userData.shadowLight;
 	if (sl) {
-		sl.position.set(
-			camera.position.x + 25,
-			camera.position.y + 35,
-			camera.position.z + 10
-		);
-		sl.target.position.copy(camera.position);
-		sl.target.updateMatrixWorld();
+		const cx = camera.position.x, cy = camera.position.y, cz = camera.position.z;
+		if (sl._lx !== cx || sl._ly !== cy || sl._lz !== cz) {
+			sl.position.set(cx + 25, cy + 35, cz + 10);
+			sl.target.position.copy(camera.position);
+			sl.target.updateMatrixWorld();
+			sl._lx = cx; sl._ly = cy; sl._lz = cz;
+		}
 	}
 
 	// Crossfade proximité CSS3D → CRT + perturbation dodecaèdre

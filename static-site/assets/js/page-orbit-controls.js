@@ -3,6 +3,7 @@ import * as THREE from '../libs/three.webgpu.min.js';
 const _direction = new THREE.Vector3();
 const _forward = new THREE.Vector3();
 const _right = new THREE.Vector3();
+const _euler = new THREE.Euler(0, 0, 0, "YXZ");
 
 class PageLookControls {
   constructor(camera, domElement) {
@@ -191,8 +192,8 @@ class PageLookControls {
   update() {
     if (!this.enabled) return;
 
-    const e = new THREE.Euler(this.pitch, this.yaw, 0, "YXZ");
-    this.camera.quaternion.setFromEuler(e);
+    _euler.set(this.pitch, this.yaw, 0);
+    this.camera.quaternion.setFromEuler(_euler);
 
     // WASD movement in explore mode — camera leads direction
     if (this.exploreMode) {
