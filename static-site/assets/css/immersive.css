@@ -1626,6 +1626,171 @@ body.immersive-ready .immersive-loader {
 	color: var(--muted);
 }
 
+/* ---- Nav buttons (prev/next) ---- */
+.rnbo-nav {
+	display: inline;
+	padding: 0 0.15rem;
+	border: none;
+	background: transparent;
+	color: var(--muted);
+	font-family: var(--mono);
+	font-size: 0.9rem;
+	cursor: pointer;
+	transition: color 0.15s;
+	line-height: 1;
+}
+.rnbo-nav:hover { color: #fff; }
+
+/* ---- Playlist toggle button ---- */
+.rnbo-playlist-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	font-family: var(--mono);
+	font-size: 0.8rem;
+	color: #fff;
+	transition: color 0.15s;
+}
+.rnbo-playlist-btn:hover { color: var(--accent); }
+.rnbo-playlist-btn .rnbo-track {
+	pointer-events: none;
+}
+.rnbo-playlist-arrow {
+	font-size: 0.6rem;
+	color: var(--muted);
+	transition: transform 0.25s, color 0.15s;
+}
+.rnbo-playlist-btn[aria-expanded="true"] .rnbo-playlist-arrow {
+	transform: rotate(180deg);
+}
+.rnbo-playlist-btn:hover .rnbo-playlist-arrow { color: var(--accent); }
+
+/* ---- Playlist panel ---- */
+.rnbo-playlist {
+	position: fixed;
+	left: 50%;
+	transform: translateX(-50%) translateY(8px);
+	bottom: calc(42px + 1rem + 0.6rem);
+	z-index: 9;
+	width: 360px;
+	max-width: calc(100vw - 2rem);
+	max-height: 50vh;
+	overflow-y: auto;
+	border: 1px solid var(--line);
+	border-radius: 3px;
+	background: rgba(5, 5, 5, 0.95);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.5);
+	font-family: var(--mono);
+	font-size: 0.75rem;
+	color: var(--muted);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.25s, transform 0.25s;
+}
+.rnbo-playlist.is-open {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateX(-50%) translateY(0);
+}
+.rnbo-playlist__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.7rem 1rem 0.5rem;
+	border-bottom: 1px solid var(--line);
+}
+.rnbo-playlist__title {
+	color: var(--accent);
+	font-size: 0.7rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+.rnbo-playlist__close {
+	padding: 0;
+	border: none;
+	background: transparent;
+	color: var(--muted);
+	font-family: var(--mono);
+	font-size: 0.75rem;
+	cursor: pointer;
+	transition: color 0.15s;
+}
+.rnbo-playlist__close:hover { color: #fff; }
+.rnbo-playlist__section {
+	padding: 0.5rem 0;
+}
+.rnbo-playlist__section-label {
+	display: block;
+	padding: 0.2rem 1rem 0.4rem;
+	font-size: 0.65rem;
+	letter-spacing: 0.08em;
+	color: var(--accent-dim);
+	text-transform: uppercase;
+}
+.rnbo-playlist__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.rnbo-playlist__item {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.45rem 1rem;
+	cursor: pointer;
+	transition: background 0.15s, color 0.15s;
+	color: var(--text);
+	font-size: 0.75rem;
+	letter-spacing: 0.02em;
+}
+.rnbo-playlist__item:hover {
+	background: rgba(255, 255, 255, 0.04);
+	color: #fff;
+}
+.rnbo-playlist__item.is-active {
+	color: var(--accent);
+}
+.rnbo-playlist__item-icon {
+	font-size: 0.6rem;
+	color: var(--muted);
+	flex-shrink: 0;
+	width: 1rem;
+	text-align: center;
+}
+.rnbo-playlist__item.is-active .rnbo-playlist__item-icon {
+	color: var(--accent);
+}
+.rnbo-playlist__item-name {
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rnbo-playlist__item-meta {
+	font-size: 0.6rem;
+	color: var(--muted);
+	flex-shrink: 0;
+}
+.rnbo-playlist__item--disco {
+	color: var(--muted);
+}
+.rnbo-playlist__item--disco:hover {
+	color: var(--text);
+}
+.rnbo-playlist__item--disco .rnbo-playlist__item-icon {
+	color: rgba(255,255,255,0.15);
+}
+/* Scrollbar inside playlist */
+.rnbo-playlist::-webkit-scrollbar { width: 4px; }
+.rnbo-playlist::-webkit-scrollbar-track { background: transparent; }
+.rnbo-playlist::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
 /* ---- WebKit track ---- */
 #rnbo-seek::-webkit-slider-runnable-track,
 #rnbo-volume::-webkit-slider-runnable-track {
@@ -2259,6 +2424,14 @@ body.immersive-ready .immersive-loader {
 	.rnbo-label { font-size: 0.6rem; }
 	.rnbo-separator { font-size: 0.7rem; }
 	.rnbo-toggle { font-size: 0.65rem; }
+	.rnbo-nav { font-size: 0.75rem; padding: 0 0.1rem; }
+	.rnbo-playlist-arrow { font-size: 0.5rem; }
+
+	.rnbo-playlist {
+		width: calc(100vw - 1rem);
+		bottom: calc(36px + 0.5rem + 0.4rem);
+		max-height: 45vh;
+	}
 
 	#rnbo-seek {
 		flex: 1 1 auto;
