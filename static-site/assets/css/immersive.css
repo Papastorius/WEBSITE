@@ -156,11 +156,11 @@ body.immersive-ready .immersive-loader {
 }
 
 .immersive-loader__dot {
-	width: 6px;
-	height: 6px;
+	width: 18px;
+	height: 18px;
 	border-radius: 50%;
 	background: var(--accent);
-	box-shadow: 0 0 10px rgba(215, 38, 56, 0.6), 0 0 20px rgba(215, 38, 56, 0.2);
+	box-shadow: 0 0 24px rgba(215, 38, 56, 0.7), 0 0 60px rgba(215, 38, 56, 0.35);
 	outline: 1px solid rgba(215, 38, 56, 0.15);
 	outline-offset: 4px;
 	animation: loader-dot-pulse 2s ease-in-out infinite;
@@ -1044,7 +1044,7 @@ body.immersive-ready .immersive-loader {
 
 .home-highlight__eyebrow {
 	margin: 0 0 0.3rem;
-	font-size: 0.9rem;
+	font-size: 1.05rem;
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
 	color: var(--muted);
@@ -1052,7 +1052,7 @@ body.immersive-ready .immersive-loader {
 
 .home-highlight__title {
 	margin: 0;
-	font-size: 1.5rem;
+	font-size: 1.8rem;
 	font-weight: 500;
 	line-height: 1.2;
 	color: #fff;
@@ -1060,13 +1060,13 @@ body.immersive-ready .immersive-loader {
 
 .home-highlight__year {
 	margin: 0.2rem 0 0;
-	font-size: 1.1rem;
+	font-size: 1.3rem;
 	color: var(--muted);
 }
 
 .home-highlight__desc {
 	margin: 0.5rem 0 0;
-	font-size: 1.2rem;
+	font-size: 1.4rem;
 	color: var(--text);
 	line-height: 1.5;
 }
@@ -1074,7 +1074,7 @@ body.immersive-ready .immersive-loader {
 .home-highlight__cta {
 	display: inline-block;
 	margin-top: 0.5rem;
-	font-size: 1.1rem;
+	font-size: 1.3rem;
 	font-weight: 400;
 	letter-spacing: 0.06em;
 	color: var(--accent);
@@ -1114,7 +1114,7 @@ body.immersive-ready .immersive-loader {
 
 .home-video-item__title {
 	margin: 0.5rem 0 0;
-	font-size: 1.1rem;
+	font-size: 1.3rem;
 	color: var(--muted);
 }
 
@@ -1123,7 +1123,7 @@ body.immersive-ready .immersive-loader {
 	margin-top: 0.6rem;
 	padding: 0.45rem 0.9rem;
 	font-family: var(--mono);
-	font-size: 1.05rem;
+	font-size: 1.25rem;
 	letter-spacing: 0.08em;
 	color: var(--accent);
 	text-decoration: none;

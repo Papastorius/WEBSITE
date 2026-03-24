@@ -295,10 +295,15 @@ function initProjetsTabs() {
 function initPanelLinks() {
 	// CSS3D 3D transforms break click events on links inside panels.
 	// Use getBoundingClientRect() to manually detect clicks on <a> elements.
+	// Only check links inside the currently focused panel to avoid ghost clicks.
 	document.addEventListener('pointerup', (e) => {
 		if (!wasClick(e)) return;
-		const allLinks = document.querySelectorAll('.immersive-page__panel a[href]');
-		for (const link of allLinks) {
+		// Ignore clicks on navigation or header elements
+		if (e.target.closest('.immersive-nav, header')) return;
+		const focusedPanel = document.querySelector('.panel--focused .immersive-page__panel');
+		if (!focusedPanel) return;
+		const panelLinks = focusedPanel.querySelectorAll('a[href]');
+		for (const link of panelLinks) {
 			const rect = link.getBoundingClientRect();
 			if (rect.width === 0 || rect.height === 0) continue;
 			if (e.clientX >= rect.left && e.clientX <= rect.right &&

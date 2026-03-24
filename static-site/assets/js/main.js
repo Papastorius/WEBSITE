@@ -939,7 +939,7 @@ function setupCSSPanels() {
 
 		if (pageId === 'page-accueil') {
 			// Accueil panel attached to camera — visible on landing
-			cssObject.position.set(-2, -1.5, -18);
+			cssObject.position.set(-2, -1.5, -14);
 			cssObject.rotation.y = 0.08;
 			cssObject.scale.setScalar(getCSSPanelScale());
 			cssObject.visible = page.classList.contains('is-active');
