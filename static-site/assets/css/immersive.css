@@ -2029,24 +2029,24 @@ body.immersive-ready .immersive-loader {
 	}
 
 	.home-identity__dot {
-		width: 5px;
-		height: 5px;
+		width: 12px;
+		height: 12px;
 	}
 
 	.home-identity__status {
-		font-size: 0.5rem;
+		font-size: 0.75rem;
 		letter-spacing: 0.18em;
 	}
 
 	.home-identity__name {
-		font-size: 3.6rem;
+		font-size: 4.5rem;
 		letter-spacing: 0.06em;
 		line-height: 0.9;
 	}
 
 	.home-identity__role {
 		margin-top: 1rem;
-		font-size: 1rem;
+		font-size: 1.3rem;
 		letter-spacing: 0.1em;
 	}
 
@@ -2075,7 +2075,7 @@ body.immersive-ready .immersive-loader {
 	}
 
 	.home-release__label {
-		font-size: 0.7rem;
+		font-size: 0.85rem;
 		margin-bottom: 0.5rem;
 	}
 
@@ -2085,20 +2085,20 @@ body.immersive-ready .immersive-loader {
 	}
 
 	.home-release__img {
-		width: 4rem;
-		height: 4rem;
+		width: 4.5rem;
+		height: 4.5rem;
 	}
 
 	.home-release__title {
-		font-size: 1.1rem;
+		font-size: 1.35rem;
 	}
 
 	.home-release__meta {
-		font-size: 0.85rem;
+		font-size: 1.05rem;
 	}
 
 	.home-release__cta {
-		font-size: 0.8rem;
+		font-size: 1rem;
 	}
 
 	/* ---- Home: Next date ---- */
@@ -2107,24 +2107,24 @@ body.immersive-ready .immersive-loader {
 	}
 
 	.home-next-date__label {
-		font-size: 0.7rem;
+		font-size: 0.85rem;
 	}
 
 	.home-next-date__date {
-		font-size: 1rem;
+		font-size: 1.2rem;
 	}
 
 	.home-next-date__title {
-		font-size: 1.05rem;
+		font-size: 1.25rem;
 	}
 
 	.home-next-date__location {
-		font-size: 0.85rem;
+		font-size: 1.05rem;
 	}
 
 	/* ---- Home: Nav hint ---- */
 	.home-nav-hint {
-		font-size: 0.7rem;
+		font-size: 0.85rem;
 	}
 
 	.home-nav-hint__text {
@@ -2135,8 +2135,8 @@ body.immersive-ready .immersive-loader {
 		padding: 8px 16px;
 	}
 
-	.panel-header__label { font-size: 0.75rem; }
-	.panel-header__meta { font-size: 0.55rem; }
+	.panel-header__label { font-size: 0.9rem; }
+	.panel-header__meta { font-size: 0.7rem; }
 
 	.panel-body {
 		padding: 22px 22px 28px;
