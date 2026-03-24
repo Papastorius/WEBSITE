@@ -31,11 +31,11 @@ const ROOM_DEBUG_BRIGHT_MATERIAL_PROPS = {
 
 const renderer = new THREE.WebGPURenderer({ antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 680 ? 1.5 : 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, _isMobile ? 1.2 : 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.setClearColor(BASE_CLEAR_COLOR, 1);
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = _isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = BASE_EXPOSURE;
 renderer.domElement.setAttribute('aria-hidden', 'true');
@@ -628,15 +628,17 @@ function setCamera(targetId) {
 
 	controls.enabled = false;
 
+	const camDuration = _isMobile ? 0.85 : 1.45;
+
 	gsap.to(camera.position, {
 		...view.position,
-		duration: 1.45,
+		duration: camDuration,
 		ease: 'power2.inOut',
 	});
 
 	gsap.to(camera.rotation, {
 		...view.rotation,
-		duration: 1.45,
+		duration: camDuration,
 		ease: 'power2.inOut',
 		onComplete: () => {
 			controls.syncFromCamera();
@@ -1046,8 +1048,8 @@ function setupLights() {
 	const lightA = new THREE.DirectionalLight(0x7bc2e8, 2.4);
 	lightA.position.set(10, 30, 10);
 	lightA.castShadow = true;
-	lightA.shadow.mapSize.width = 2048;
-	lightA.shadow.mapSize.height = 2048;
+	lightA.shadow.mapSize.width = _isMobile ? 1024 : 2048;
+	lightA.shadow.mapSize.height = _isMobile ? 1024 : 2048;
 	lightA.shadow.camera.near = 0.5;
 	lightA.shadow.camera.far = 200;
 	lightA.shadow.camera.left = -55;
@@ -1102,7 +1104,7 @@ function setupLights() {
 
 	// === ORBITING LIGHT — boule lumineuse, ton froid ===
 	const orbitLight = new THREE.PointLight(0x9ad9e8, 15, 70, 2);
-	orbitLight.castShadow = true;
+	orbitLight.castShadow = !_isMobile;
 	orbitLight.shadow.mapSize.width = 512;
 	orbitLight.shadow.mapSize.height = 512;
 	orbitLight.shadow.radius = 4;
@@ -1117,8 +1119,8 @@ function setupLights() {
 	scene.userData.orbitLight = orbitLight;
 	scene.userData.redPoint = redPoint;
 
-	// === GOD RAYS — cônes lumineux volumétriques fake ===
-	createGodRays();
+	// === GOD RAYS — cônes lumineux volumétriques fake (desktop only) ===
+	if (!_isMobile) createGodRays();
 
 	scene.add(ambient, hemi, lightA, windowSpotR, windowSpotL, windowSpotBack, sanctumLight,
 		redPoint, floorGlow, orbitLight);
