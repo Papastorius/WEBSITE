@@ -103,8 +103,8 @@ const MATRIX_FOG = new THREE.FogExp2(0x000000, 0.018);
 
 const cameraViewsDesktop = {
 	'page-accueil': {
-		position: { x: -8, y: -10, z: 40 },
-		rotation: { x: 0, y: 0, z: 0 },
+		position: { x: 7.32, y: -10.4, z: 39.22 },
+		rotation: { x: 0, y: -0.11, z: 0 },
 	},
 	'page-bio': {
 		position: { x: -30, y: 25, z: 35 },
@@ -115,7 +115,7 @@ const cameraViewsDesktop = {
 		rotation: { x: -0.08, y: -1.08, z: 0 },
 	},
 	'page-contact': {
-		position: { x: -18, y: 8, z: 2 },
+		position: { x: -18, y: 8, z: 43 },
 		rotation: { x: -0.04, y: 3.02, z: 0 },
 	},
 	'page-actus': {
@@ -138,7 +138,7 @@ const cameraViewsMobile = {
 		rotation: { x: 0, y: -0.71, z: 0 },
 	},
 	'page-contact': {
-		position: { x: -13.5, y: 10, z: 6.5 },
+		position: { x: -13.5, y: 10, z: 38.5 },
 		rotation: { x: 0, y: 3.02, z: 0 },
 	},
 	'page-actus': {
@@ -211,8 +211,8 @@ const panelPlacements = {
 		rotation: { x: 0, y: -1.08, z: 0 },
 	},
 	'page-contact': {
-		// Camera (-18, 8, 2) rotY 3.02 → panel behind
-		position: { x: -16, y: 8, z: 18 },
+		// Camera (-18, 8, -43) rotY 3.02 → panel against back wall
+		position: { x: -16, y: 8, z: 27 },
 		rotation: { x: -0.04, y: 3.02, z: 0 },
 	},
 	'page-actus': {
@@ -405,9 +405,14 @@ async function bootstrap() {
 			const pmremGenerator = new THREE.PMREMGenerator(renderer);
 			const fakeEnvScene = new THREE.Scene();
 			fakeEnvScene.background = new THREE.Color(0x0d1e2e);
+			const envRedLight = new THREE.PointLight(0xd72638, 3, 20);
+			envRedLight.position.set(-5, 2, -3);
+			const envTealLight = new THREE.PointLight(0x52c8e8, 2, 20);
+			envTealLight.position.set(5, 5, 5);
+			fakeEnvScene.add(envRedLight, envTealLight);
 			const envRT = pmremGenerator.fromScene(fakeEnvScene);
 			mesh.material.envMap = envRT.texture;
-			mesh.material.envMapIntensity = 0.5;
+			mesh.material.envMapIntensity = 0.8;
 			pmremGenerator.dispose();
 		}
 
@@ -525,16 +530,28 @@ function initExploreMode() {
 			cssRenderer.domElement.style.pointerEvents = 'none';
 			if (cssPanels['page-accueil']) cssPanels['page-accueil'].visible = false;
 			if (scene.userData.accProxy) scene.userData.accProxy.visible = false;
+			// Remove distant/focused classes — let CRT distance system take over
+			for (const [id, cssObj] of Object.entries(cssPanels)) {
+				cssObj.element.classList.remove('panel--distant', 'panel--focused');
+			}
 			hint?.classList.add('is-visible');
 			setTimeout(() => hint?.classList.remove('is-visible'), 4000);
 		} else {
 			controls.resetKeys();
 			document.body.classList.remove('explore-active');
 			cssRenderer.domElement.style.pointerEvents = 'auto';
-			// Restaurer l'opacité de tous les panneaux
+			// Restore distant/focused classes based on active page
 			for (const [id, cssObj] of Object.entries(cssPanels)) {
-				cssObj.element.style.opacity = '1';
+				cssObj.element.style.opacity = '';
 				panelOpacity[id] = 1;
+				if (id === 'page-accueil') continue;
+				if (id === activePageId) {
+					cssObj.element.classList.remove('panel--distant');
+					cssObj.element.classList.add('panel--focused');
+				} else {
+					cssObj.element.classList.remove('panel--focused');
+					cssObj.element.classList.add('panel--distant');
+				}
 			}
 			if (activePageId === 'page-accueil') {
 				if (cssPanels['page-accueil']) cssPanels['page-accueil'].visible = true;
@@ -555,7 +572,7 @@ function initExploreMode() {
 			document.body.classList.remove('explore-active');
 			cssRenderer.domElement.style.pointerEvents = 'auto';
 			for (const [id, cssObj] of Object.entries(cssPanels)) {
-				cssObj.element.style.opacity = '1';
+				cssObj.element.style.opacity = '';
 				panelOpacity[id] = 1;
 			}
 			hint?.classList.remove('is-visible');
@@ -584,6 +601,19 @@ function setActivePage(pageId) {
 	// Accueil panel toggles with navigation, others stay always visible
 	if (cssPanels['page-accueil']) {
 		cssPanels['page-accueil'].visible = (pageId === 'page-accueil');
+	}
+
+	// Distant/focused state — inactive panels become dim silhouettes in the room
+	for (const [id, cssObj] of Object.entries(cssPanels)) {
+		if (id === 'page-accueil') continue;
+		const el = cssObj.element;
+		if (id === pageId) {
+			el.classList.remove('panel--distant');
+			el.classList.add('panel--focused');
+		} else {
+			el.classList.remove('panel--focused');
+			el.classList.add('panel--distant');
+		}
 	}
 
 	// Keep mobile nav in sync
@@ -677,8 +707,8 @@ function createImagePanel(imagePath, width, height, position, rotation, animConf
 		opacity: 0,
 		emissive: new THREE.Color(0xffffff),
 		emissiveMap: texture,
-		emissiveIntensity: 2.0,
-		toneMapped: false,
+		emissiveIntensity: 0,
+		toneMapped: true,
 		side: THREE.DoubleSide,
 		depthWrite: false,
 	});
@@ -909,7 +939,7 @@ function setupCSSPanels() {
 
 		if (pageId === 'page-accueil') {
 			// Accueil panel attached to camera — visible on landing
-			cssObject.position.set(-2, -0.3, -18);
+			cssObject.position.set(-2, -1.5, -18);
 			cssObject.rotation.y = 0.08;
 			cssObject.scale.setScalar(getCSSPanelScale());
 			cssObject.visible = page.classList.contains('is-active');
@@ -920,7 +950,7 @@ function setupCSSPanels() {
 			const s = getCSSPanelScale();
 			const depth = 0.8;
 			const accProxy = new THREE.Mesh(
-				new THREE.BoxGeometry(1400 * s, 1600 * s, depth),
+				new THREE.BoxGeometry(1600 * s, 1600 * s, depth),
 				new THREE.MeshPhysicalMaterial({
 					color: 0x0a1520,
 					roughness: 0.6,
@@ -957,7 +987,7 @@ function setupCSSPanels() {
 
 		// 3D slab proxy — visible box behind the CSS3D panel
 		const scale = getCSSPanelScale();
-		const proxyW = 1400 * scale;
+		const proxyW = 1600 * scale;
 		const proxyH = 1600 * scale;
 		const proxyDepth = 0.8;
 		const proxyMat = new THREE.MeshPhysicalMaterial({
@@ -1007,10 +1037,10 @@ function updateCSSPanelLayout() {
 
 function setupLights() {
 	// === AMBIANCE SOMBRE — très peu d'ambient pour garder les ombres profondes ===
-	const ambient = new THREE.AmbientLight(0x31576b, 1.45);
+	const ambient = new THREE.AmbientLight(0x1e3a4a, 0.6);
 
 	// === HEMISPHERE — gradient ciel/sol bleu-teal ===
-	const hemi = new THREE.HemisphereLight(0x52728d, 0x1a2b36, 1.05);
+	const hemi = new THREE.HemisphereLight(0x3a5a70, 0x0d1a22, 0.5);
 
 	// === KEY LIGHT — directional, shadow caster, follows camera ===
 	const lightA = new THREE.DirectionalLight(0x7bc2e8, 2.4);
@@ -1020,10 +1050,10 @@ function setupLights() {
 	lightA.shadow.mapSize.height = 2048;
 	lightA.shadow.camera.near = 0.5;
 	lightA.shadow.camera.far = 200;
-	lightA.shadow.camera.left = -80;
-	lightA.shadow.camera.right = 80;
-	lightA.shadow.camera.top = 80;
-	lightA.shadow.camera.bottom = -80;
+	lightA.shadow.camera.left = -55;
+	lightA.shadow.camera.right = 45;
+	lightA.shadow.camera.top = 45;
+	lightA.shadow.camera.bottom = -35;
 	lightA.shadow.bias = -0.002;
 	lightA.shadow.radius = 4;
 	scene.userData.shadowLight = lightA;
@@ -1063,7 +1093,7 @@ function setupLights() {
 	scene.add(sanctumLight.target);
 
 	// === ACCENT ROUGE — subtil, dans l'ombre, identité artistique ===
-	const redPoint = new THREE.PointLight(0xd72638, 0.8, 50, 2);
+	const redPoint = new THREE.PointLight(0xd72638, 3.5, 120, 2);
 	redPoint.position.set(0, 8, -10);
 
 	// === LUEUR SOL — très subtile, bleu profond ===
@@ -1073,14 +1103,14 @@ function setupLights() {
 	// === ORBITING LIGHT — boule lumineuse, ton froid ===
 	const orbitLight = new THREE.PointLight(0x9ad9e8, 15, 70, 2);
 	orbitLight.castShadow = true;
-	orbitLight.shadow.mapSize.width = 1024;
-	orbitLight.shadow.mapSize.height = 1024;
+	orbitLight.shadow.mapSize.width = 512;
+	orbitLight.shadow.mapSize.height = 512;
 	orbitLight.shadow.radius = 4;
 	orbitLight.shadow.bias = -0.002;
 
 	// Sphère lumineuse visible
 	const orbGeo = new THREE.SphereGeometry(0.3, 16, 16);
-	const orbMat = new THREE.MeshBasicMaterial({ color: 0xeeddcc });
+	const orbMat = new THREE.MeshBasicMaterial({ color: 0x9ad9e8 });
 	const orbMesh = new THREE.Mesh(orbGeo, orbMat);
 	orbitLight.add(orbMesh);
 
@@ -1131,6 +1161,11 @@ function createGodRays() {
 	ray3.rotation.y = 0.2;
 
 	scene.userData.godRays = [ray1, ray2, ray3];
+	scene.userData.godRaysBaseRot = [
+		{ z: ray1.rotation.z, y: ray1.rotation.y },
+		{ z: ray2.rotation.z, y: ray2.rotation.y },
+		{ z: ray3.rotation.z, y: ray3.rotation.y },
+	];
 	scene.add(ray1, ray2, ray3);
 }
 
@@ -1582,7 +1617,7 @@ async function buildCRTScreens() {
 		const texture = createTerminalTexture(title, lines, concertsForPage);
 		const placement = panelPlacements[id];
 		const scale = getCSSPanelScale();
-		const panelW = 1400 * scale;
+		const panelW = 1600 * scale;
 		const panelH = 1600 * scale;
 
 		const mat = new THREE.MeshStandardMaterial({
@@ -2024,8 +2059,15 @@ function updatePanelCrossfade(elapsed) {
 		}
 		for (const [id, cssObj] of Object.entries(cssPanels)) {
 			if (id === 'page-accueil') continue;
-			cssObj.element.style.opacity = '1';
+			// Let CSS classes (panel--focused / panel--distant) handle opacity in normal mode
+			cssObj.element.style.opacity = '';
 			panelOpacity[id] = 1;
+			// Reset child images opacity
+			if (id === 'page-projets') {
+				for (const img of cssObj.element.querySelectorAll('img')) {
+					img.style.opacity = '';
+				}
+			}
 		}
 		return;
 	}
@@ -2069,8 +2111,14 @@ function updatePanelCrossfade(elapsed) {
 		const newCRT = currentCRT + (targetCRT - currentCRT) * 0.06;
 		panelOpacity[id] = 1 - newCRT;
 
-		// Appliquer sur CSS3D
-		cssObj.element.style.opacity = panelOpacity[id].toFixed(2);
+		// Appliquer sur CSS3D — also force on child images (CSS3D preserve-3d breaks opacity cascade)
+		const opStr = panelOpacity[id].toFixed(2);
+		cssObj.element.style.opacity = opStr;
+		if (id === 'page-projets') {
+			for (const img of cssObj.element.querySelectorAll('img')) {
+				img.style.opacity = opStr;
+			}
+		}
 
 		// Appliquer sur CRT
 		const screen = crtScreens[id];
@@ -2186,20 +2234,32 @@ function animate() {
 		ol.intensity = 15 + envCurrent * 18;
 	}
 
-	// God rays — breathing + audio-reactive opacity
+	// God rays — slow drift rotation + breathing + audio-reactive opacity
 	const rays = scene.userData.godRays;
-	if (rays) {
+	const raysBase = scene.userData.godRaysBaseRot;
+	if (rays && raysBase) {
+		const driftSpeeds = [0.07, 0.09, 0.08];
+		const driftAmountsZ = [0.08, 0.06, 0.07];
+		const driftAmountsY = [0.04, 0.03, 0.05];
+		const baseOpacities = [0.07, 0.052, 0.042];
 		for (let i = 0; i < rays.length; i++) {
-			const baseOpacity = i === 0 ? 0.07 : i === 1 ? 0.052 : 0.042;
+			// Slow drift — feels like dust shifting in light
+			const sinT = Math.sin(elapsed * driftSpeeds[i] + i * 2.0);
+			const cosT = Math.cos(elapsed * driftSpeeds[i] * 0.8 + i * 1.5);
+			rays[i].rotation.z = raysBase[i].z + sinT * driftAmountsZ[i];
+			rays[i].rotation.y = raysBase[i].y + cosT * driftAmountsY[i];
+
+			// Opacity: breathing + audio
 			const breath = Math.sin(elapsed * 0.15 + i * 1.2) * 0.3 + 0.7;
-			rays[i].material.opacity = baseOpacity * breath + envCurrent * 0.06;
+			rays[i].material.opacity = baseOpacities[i] * breath + envCurrent * 0.06;
 		}
 	}
 
 	// Red point light — pulse with audio
 	const rp = scene.userData.redPoint;
 	if (rp) {
-		rp.intensity = 0.8 + envCurrent * 4;
+		const heartbeat = 0.6 + Math.sin(elapsed * 1.2) * 0.2 + Math.sin(elapsed * 2.1) * 0.1;
+		rp.intensity = heartbeat + envCurrent * 4;
 	}
 
 	// Shadow light follows camera so shadows stay relevant
@@ -2228,7 +2288,7 @@ function animate() {
 function initCameraDebug() {
 	if (!new URLSearchParams(location.search).has('debug')) return;
 
-	const views = cameraViewsMobile;
+	const views = getCameraViews();
 	const axes = [
 		{ key: 'x',    target: 'position', min: -80,  max: 80,  step: 0.02   },
 		{ key: 'y',    target: 'position', min: -40,  max: 80,  step: 0.02   },
