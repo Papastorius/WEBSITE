@@ -29,13 +29,14 @@ const ROOM_DEBUG_BRIGHT_MATERIAL_PROPS = {
 	metalness: 0.0,
 };
 
+const _isMobileEarly = window.innerWidth < 680;
 const renderer = new THREE.WebGPURenderer({ antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, _isMobile ? 1.2 : 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, _isMobileEarly ? 1.2 : 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.setClearColor(BASE_CLEAR_COLOR, 1);
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = _isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = _isMobileEarly ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = BASE_EXPOSURE;
 renderer.domElement.setAttribute('aria-hidden', 'true');
