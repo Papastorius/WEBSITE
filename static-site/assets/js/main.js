@@ -638,7 +638,7 @@ function setCamera(targetId) {
 
 	controls.enabled = false;
 
-	const camDuration = _isMobile ? 0.85 : 1.45;
+	const camDuration = _isMobile ? 1.8 : 1.45;
 
 	gsap.to(camera.position, {
 		...view.position,
