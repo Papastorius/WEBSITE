@@ -116,8 +116,8 @@ const cameraViewsDesktop = {
 		rotation: { x: -0.08, y: -1.08, z: 0 },
 	},
 	'page-contact': {
-		position: { x: -18, y: 8, z: 43 },
-		rotation: { x: -0.04, y: 3.02, z: 0 },
+		position: { x: -26.24, y: 3.78, z: 33 },
+		rotation: { x: 0, y: 3.02, z: 0 },
 	},
 	'page-actus': {
 		position: { x: -30, y: -15, z: -30 },
@@ -139,7 +139,7 @@ const cameraViewsMobile = {
 		rotation: { x: 0, y: -0.71, z: 0 },
 	},
 	'page-contact': {
-		position: { x: -13.5, y: 10, z: 38.5 },
+		position: { x: -26.24, y: 3.78, z: 33 },
 		rotation: { x: 0, y: 3.02, z: 0 },
 	},
 	'page-actus': {
@@ -212,9 +212,9 @@ const panelPlacements = {
 		rotation: { x: 0, y: -1.08, z: 0 },
 	},
 	'page-contact': {
-		// Camera (-18, 8, -43) rotY 3.02 → panel against back wall
-		position: { x: -16, y: 8, z: 27 },
-		rotation: { x: -0.04, y: 3.02, z: 0 },
+		// Camera (-26.24, 3.78, 33) rotY 3.02 → panel just in front
+		position: { x: -24, y: 3.78, z: 15 },
+		rotation: { x: 0, y: 3.02, z: 0 },
 	},
 	'page-actus': {
 		// Same position as old accueil — in the room opening
