@@ -1,10 +1,22 @@
 [
   {
-    "id": "buffer1",
-    "file": "10h10.mp3"
+    "id": "b_irina_gonzalez_la_primavera_mp3",
+    "file": "irina-gonzalez-la-primavera.mp3"
   },
   {
-    "id": "buffer2",
-    "file": "What is your name_.mp3"
+    "id": "b_liya_grigoryan_trio_mp3",
+    "file": "liya-grigoryan-trio.mp3"
+  },
+  {
+    "id": "b_amaury_faye_believe_it_or_not_mp3",
+    "file": "amaury-faye-believe-it-or-not.mp3"
+  },
+  {
+    "id": "b_daoud_platos_twins_mp3",
+    "file": "daoud-platos-twins.mp3"
+  },
+  {
+    "id": "b_ekko_turbolent_mp3",
+    "file": "ekko-turbolent.mp3"
   }
 ]

@@ -1675,7 +1675,7 @@ body.immersive-ready .immersive-loader {
 	left: 50%;
 	transform: translateX(-50%) translateY(8px);
 	bottom: calc(42px + 1rem + 0.6rem);
-	z-index: 9;
+	z-index: 101;
 	width: 360px;
 	max-width: calc(100vw - 2rem);
 	max-height: 50vh;

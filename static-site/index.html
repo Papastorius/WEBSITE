@@ -258,21 +258,6 @@
 		<input id="rnbo-volume" type="range" min="0" max="1" step="0.01" value="0.5">
 	</div>
 
-	<!-- Playlist panel -->
-	<div id="rnbo-playlist" class="rnbo-playlist" aria-hidden="true">
-		<div class="rnbo-playlist__header">
-			<span class="rnbo-playlist__title">> PLAYLIST</span>
-			<button id="rnbo-playlist-close" class="rnbo-playlist__close" aria-label="Fermer la playlist">[ × ]</button>
-		</div>
-		<div class="rnbo-playlist__section">
-			<span class="rnbo-playlist__section-label">— Pistes RNBO</span>
-			<ul id="rnbo-playlist-tracks" class="rnbo-playlist__list"></ul>
-		</div>
-		<div class="rnbo-playlist__section">
-			<span class="rnbo-playlist__section-label">— Discographie</span>
-			<ul id="rnbo-playlist-disco" class="rnbo-playlist__list"></ul>
-		</div>
-	</div>
 
 	<!-- Mobile swipe navigation dots -->
 	<div class="mobile-page-dots" id="mobile-page-dots" aria-hidden="true"></div>
@@ -287,6 +272,22 @@
 			<p>Cette expérience immersive requiert JavaScript.</p>
 		</div>
 	</noscript>
+</div>
+
+<!-- Playlist panel — outside .immersive-shell to avoid stacking context -->
+<div id="rnbo-playlist" class="rnbo-playlist" aria-hidden="true">
+	<div class="rnbo-playlist__header">
+		<span class="rnbo-playlist__title">> PLAYLIST</span>
+		<button id="rnbo-playlist-close" class="rnbo-playlist__close" aria-label="Fermer la playlist">[ × ]</button>
+	</div>
+	<div class="rnbo-playlist__section">
+		<span class="rnbo-playlist__section-label">— Pistes RNBO</span>
+		<ul id="rnbo-playlist-tracks" class="rnbo-playlist__list"></ul>
+	</div>
+	<div class="rnbo-playlist__section">
+		<span class="rnbo-playlist__section-label">— Discographie</span>
+		<ul id="rnbo-playlist-disco" class="rnbo-playlist__list"></ul>
+	</div>
 </div>
 
 <script src="assets/libs/rnbo.webaudio.js"></script>

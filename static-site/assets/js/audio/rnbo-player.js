@@ -5,7 +5,19 @@ let currentSec = 0;
 let totalSec = 0;
 let playerAssetsPromise;
 let trackNames = [];
-let currentTrackIndex = 0;
+const START_TRACK_INDEX = 0; // Start on the first RNBO multibuffer entry
+let currentTrackIndex = START_TRACK_INDEX;
+let hasExplicitTrackSelection = false;
+
+// Display names override (keyed by filename without extension)
+const TRACK_DISPLAY_NAMES = {
+	'irina-gonzalez-la-primavera': 'Kiko Ruiz — La Primavera',
+	'kiko-ruiz-la-primavera': 'Kiko Ruiz — La Primavera',
+	'liya-grigoryan-trio': 'Liya Grigoryan Trio',
+	'amaury-faye-believe-it-or-not': 'Amaury Faye — Believe It or Not',
+	'daoud-platos-twins': "Daoud — Plato's Twins",
+	'ekko-turbolent': 'Ekko — Turbolent',
+};
 let isPlaying = true;
 const BAR_LENGTH = 20;
 const FILLED = '▮';
@@ -45,6 +57,50 @@ function renderBar(level01) {
 	barNode.textContent = FILLED.repeat(filled) + EMPTY.repeat(BAR_LENGTH - filled);
 }
 
+function clampTrackIndex(index) {
+	if (trackNames.length <= 0) {
+		return Math.max(0, index);
+	}
+
+	return Math.max(0, Math.min(trackNames.length - 1, index));
+}
+
+function normalizeTrackIndex(index) {
+	const rawIndex = Math.round(Number(index));
+	if (!Number.isFinite(rawIndex)) {
+		return currentTrackIndex;
+	}
+
+	if (trackNames.length <= 0) {
+		return Math.max(0, rawIndex);
+	}
+
+	const candidates = [];
+	if (rawIndex >= 0 && rawIndex < trackNames.length) {
+		candidates.push(rawIndex);
+	}
+
+	const oneBasedIndex = rawIndex - 1;
+	if (oneBasedIndex >= 0 && oneBasedIndex < trackNames.length && !candidates.includes(oneBasedIndex)) {
+		candidates.push(oneBasedIndex);
+	}
+
+	if (candidates.length === 0) {
+		return clampTrackIndex(rawIndex);
+	}
+
+	if (candidates.includes(currentTrackIndex)) {
+		return currentTrackIndex;
+	}
+
+	return candidates[0];
+}
+
+function formatTrackDisplayName(filename) {
+	const key = String(filename || '').replace(/\.[^.]+$/, '');
+	return TRACK_DISPLAY_NAMES[key] || key.replace(/_/g, ' ');
+}
+
 export function updateEnvBar(envValue) {
 	const level = Math.max(0, Math.min(1, envValue / 10));
 	renderBar(level);
@@ -53,24 +109,16 @@ export function updateEnvBar(envValue) {
 function switchToTrack(index) {
 	if (index < 0 || index >= trackNames.length) return;
 
-	// The RNBO patch uses "next" to cycle tracks.
-	// To reach a specific track, we calculate how many "next" steps from current.
-	const total = trackNames.length;
-	const steps = (index - currentTrackIndex + total) % total;
+	setMessRNBO('index', index);
 
-	for (let i = 0; i < steps; i++) {
-		setMessRNBO('next', 1);
-	}
-
+	// Update UI immediately
 	currentTrackIndex = index;
 	updateTrackDisplay();
 	updatePlaylistHighlight();
 
-	// Restart playback
 	currentSec = 0;
 	totalSec = 0;
 	renderTime();
-	setMessRNBO('start', 1);
 	isPlaying = true;
 	const toggleBtn = document.getElementById('rnbo-toggle');
 	if (toggleBtn) {
@@ -109,6 +157,7 @@ function renderPlaylistTracks() {
 	list.querySelectorAll('.rnbo-playlist__item').forEach((item) => {
 		item.addEventListener('click', () => {
 			const idx = parseInt(item.dataset.trackIndex, 10);
+			hasExplicitTrackSelection = true;
 			switchToTrack(idx);
 		});
 	});
@@ -169,20 +218,32 @@ export function initPlayerAssets(rnboBaseUrl) {
 			`${baseUrl}/media/dependencies.json`
 		);
 
-		// Load track names from dependencies
-		fetch(`${baseUrl}/media/dependencies.json`)
+		// Load track names from the RNBO patch itself so the UI order matches multibuffer.
+		fetch(`${baseUrl}/Lecteur.export.json`)
 			.then((r) => r.json())
-			.then((deps) => {
-				if (deps && deps.length > 0) {
-					trackNames = deps.map((d) =>
-						d.file.replace(/\.[^.]+$/, '').replace(/_/g, ' ')
-					);
-					currentTrackIndex = 0;
-					updateTrackDisplay();
-					renderPlaylistTracks();
+			.then((patch) => {
+				const refs = patch?.desc?.externalDataRefs;
+				if (!Array.isArray(refs) || refs.length === 0) {
+					throw new Error('No RNBO externalDataRefs found.');
 				}
+
+				trackNames = refs.map((ref) => formatTrackDisplayName(ref.file));
+				currentTrackIndex = clampTrackIndex(currentTrackIndex);
+				updateTrackDisplay();
+				renderPlaylistTracks();
 			})
-			.catch(() => {});
+			.catch(() => {
+				fetch(`${baseUrl}/media/dependencies.json`)
+					.then((r) => r.json())
+					.then((deps) => {
+						if (!Array.isArray(deps) || deps.length === 0) return;
+						trackNames = deps.map((d) => formatTrackDisplayName(d.file));
+						currentTrackIndex = clampTrackIndex(currentTrackIndex);
+						updateTrackDisplay();
+						renderPlaylistTracks();
+					})
+					.catch(() => {});
+			});
 
 		// Load discography from pages.json for the playlist
 		fetch('data/pages.json')
@@ -232,12 +293,14 @@ export function initPlayerUI() {
 	prevBtn?.addEventListener('click', (e) => {
 		e.preventDefault();
 		const prev = (currentTrackIndex - 1 + trackNames.length) % trackNames.length;
+		hasExplicitTrackSelection = true;
 		switchToTrack(prev);
 	});
 
 	nextBtn?.addEventListener('click', (e) => {
 		e.preventDefault();
 		const next = (currentTrackIndex + 1) % trackNames.length;
+		hasExplicitTrackSelection = true;
 		switchToTrack(next);
 	});
 
@@ -313,7 +376,14 @@ export function updateProgress(phase01) {
 }
 
 export function setTrackIndex(index) {
-	currentTrackIndex = Math.round(Number(index) || 0);
+	currentTrackIndex = normalizeTrackIndex(index);
 	updateTrackDisplay();
 	updatePlaylistHighlight();
+}
+
+export function jumpToStartTrack() {
+	const preferredTrackIndex = hasExplicitTrackSelection ? currentTrackIndex : START_TRACK_INDEX;
+	if (preferredTrackIndex >= 0 && preferredTrackIndex < trackNames.length) {
+		switchToTrack(preferredTrackIndex);
+	}
 }

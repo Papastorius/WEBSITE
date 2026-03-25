@@ -1,0 +1,37 @@
+[
+  {
+    "file": "tracks/daoud-platos-twins.mp3",
+    "title": "Plato's Twins",
+    "artist": "daoud",
+    "album": "OK",
+    "year": 2025
+  },
+  {
+    "file": "tracks/ekko-turbolent.mp3",
+    "title": "Turbolent",
+    "artist": "ekko",
+    "album": "Turbolent",
+    "year": 2023
+  },
+  {
+    "file": "tracks/amaury-faye-believe-it-or-not.mp3",
+    "title": "Believe It or Not",
+    "artist": "Amaury Faye",
+    "album": "",
+    "year": 2023
+  },
+  {
+    "file": "tracks/irina-gonzalez-la-primavera.mp3",
+    "title": "La Primavera",
+    "artist": "Irina González",
+    "album": "Tiempo",
+    "year": 2022
+  },
+  {
+    "file": "tracks/liya-grigoryan-trio.mp3",
+    "title": "Liya Grigoryan Trio",
+    "artist": "Liya Grigoryan Trio",
+    "album": "",
+    "year": 2016
+  }
+]

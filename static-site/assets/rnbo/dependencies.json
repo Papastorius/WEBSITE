@@ -1,10 +1,22 @@
 [
   {
-    "id": "buffer1",
-    "file": "..\\..\\..\\..\\..\\Music\\Morceaux Fred\\Mp3\\10h10.mp3"
+    "id": "b_daoud_platos_twins_mp3",
+    "file": "media\\daoud-platos-twins.mp3"
   },
   {
-    "id": "buffer2",
-    "file": "..\\..\\..\\..\\..\\Music\\Morceaux Fred\\Mp3\\What is your name_.mp3"
+    "id": "b_liya_grigoryan_trio_mp3",
+    "file": "media\\liya-grigoryan-trio.mp3"
+  },
+  {
+    "id": "b_amaury_faye_believe_it_or_not_mp3",
+    "file": "media\\amaury-faye-believe-it-or-not.mp3"
+  },
+  {
+    "id": "b_kiko_ruiz_la_primavera_mp3",
+    "file": "media\\kiko-ruiz-la-primavera.mp3"
+  },
+  {
+    "id": "b_ekko_turbolent_mp3",
+    "file": "media\\ekko-turbolent.mp3"
   }
 ]

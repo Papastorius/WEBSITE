@@ -15,6 +15,7 @@ const PATHS = {
 	libs: './assets/libs',
 };
 const ROOM_MODEL_FILE = 'website_room.glb';
+const CORE_MODEL_FILE = 'antichamber_core.glb';
 const ROOM_MODEL_SCALE = 25;
 const ROOM_DEBUG_BRIGHT_MATERIAL = false;
 const BASE_CLEAR_COLOR = 0x07101a;
@@ -22,17 +23,19 @@ const BASE_FOG_COLOR = 0x0a1621;
 const BASE_FOG_DENSITY = 0.0052;
 const BASE_EXPOSURE = 1.05;
 const ROOM_DEBUG_BRIGHT_MATERIAL_PROPS = {
-	color: 0xf2f6f7,
-	emissive: 0x5b6975,
-	emissiveIntensity: 0.2,
-	roughness: 0.92,
+	color: 0xcfd8de,
+	emissive: 0x243241,
+	emissiveIntensity: 0.08,
+	roughness: 0.96,
 	metalness: 0.0,
 };
 
+const MOBILE_DPR_CAP = 1.2;
+const DESKTOP_DPR_CAP = 2;
 const _isMobileEarly = window.innerWidth < 680;
 const renderer = new THREE.WebGPURenderer({ antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, _isMobileEarly ? 1.2 : 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, _isMobileEarly ? MOBILE_DPR_CAP : DESKTOP_DPR_CAP));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.setClearColor(BASE_CLEAR_COLOR, 1);
 renderer.shadowMap.enabled = true;
@@ -180,11 +183,12 @@ let lastY = 0;
 
 let rnboInitDone = false;
 let device;
-let targetSizeOcto = 1;
+let targetSizeOcto = 1.45;
 let glowTarget = 0;
 let glowCurrent = 0;
 let envTarget = 0;
 let envCurrent = 0;
+const meshBasePosition = new THREE.Vector3(0, -2.5, 8);
 let videoPanel;
 const videoPanelBaseRotation = { x: -0.04, y: -0.16 };
 let particles;
@@ -215,7 +219,7 @@ const panelPlacements = {
 	},
 	'page-contact': {
 		// Camera (-26.24, 3.78, 33) rotY 3.02 → panel just in front
-		position: { x: -26.24, y: 3.78, z: 31.5 },
+		position: { x: -26.24, y: 3.78, z: 51.5 },
 		rotation: { x: 0, y: 3.02, z: 0 },
 	},
 	'page-actus': {
@@ -230,13 +234,16 @@ const ndc = new THREE.Vector2();
 const clock = new THREE.Clock();
 const _camPos = new THREE.Vector3();
 const _meshPos = new THREE.Vector3();
-const _colorA = new THREE.Color(0xd72638);
-const _colorB = new THREE.Color(0xff4444);
+const _coreEmissive = new THREE.Color(0xdadad2);
 const _toCam = new THREE.Vector3();
 const _meshWorldQ = new THREE.Quaternion();
 const _parentWorldQ = new THREE.Quaternion();
 const _invParentWorldQ = new THREE.Quaternion();
 const _nWorld = new THREE.Vector3();
+const _camForward = new THREE.Vector3();
+const _camRight = new THREE.Vector3();
+const _camUp = new THREE.Vector3();
+const _meshFollowTarget = new THREE.Vector3();
 
 function createRoomDebugMaterial() {
 	return new THREE.MeshStandardMaterial(ROOM_DEBUG_BRIGHT_MATERIAL_PROPS);
@@ -260,18 +267,22 @@ function applyRoomMaterial(child) {
 	// Surfaces sombres — le contraste vient des spots, pas des matériaux
 	if (Array.isArray(child.material)) {
 		for (const mat of child.material) {
-			if (mat?.color) mat.color.multiplyScalar(0.92);
+			if (mat?.color) mat.color.multiplyScalar(0.72);
 			if (mat?.emissive) {
-				mat.emissive.lerp(new THREE.Color(0x153247), 0.35);
-				mat.emissiveIntensity = Math.max(mat.emissiveIntensity ?? 0, 0.08);
+				mat.emissive.lerp(new THREE.Color(0x0a1621), 0.18);
+				mat.emissiveIntensity = Math.min(mat.emissiveIntensity ?? 0, 0.03);
 			}
+			if ('roughness' in mat && typeof mat.roughness === 'number') mat.roughness = Math.max(mat.roughness, 0.94);
+			if ('metalness' in mat && typeof mat.metalness === 'number') mat.metalness *= 0.35;
 		}
 	} else if (child.material?.color) {
-		child.material.color.multiplyScalar(0.92);
+		child.material.color.multiplyScalar(0.72);
 		if (child.material.emissive) {
-			child.material.emissive.lerp(new THREE.Color(0x153247), 0.35);
-			child.material.emissiveIntensity = Math.max(child.material.emissiveIntensity ?? 0, 0.08);
+			child.material.emissive.lerp(new THREE.Color(0x0a1621), 0.18);
+			child.material.emissiveIntensity = Math.min(child.material.emissiveIntensity ?? 0, 0.03);
 		}
+		if ('roughness' in child.material && typeof child.material.roughness === 'number') child.material.roughness = Math.max(child.material.roughness, 0.94);
+		if ('metalness' in child.material && typeof child.material.metalness === 'number') child.material.metalness *= 0.35;
 	}
 }
 
@@ -668,22 +679,44 @@ function setCamera(targetId) {
 
 async function setupWorld() {
 	const glowMaterial = new THREE.MeshPhysicalMaterial({
-		color: 0x1a1a1a,
-		roughness: 0.3,
-		metalness: 0.6,
-		emissive: new THREE.Color(0xd72638),
-		emissiveIntensity: 0,
+		color: 0xf8f8f3,
+		roughness: 0.68,
+		metalness: 0.04,
+		emissive: new THREE.Color(0xdadad2),
+		emissiveIntensity: 0.2,
 		transparent: true,
 		opacity: 1,
-		clearcoat: 0.8,
-		clearcoatRoughness: 0.2,
+		clearcoat: 0.1,
+		clearcoatRoughness: 0.7,
 	});
 
-	mesh = new THREE.Mesh(new THREE.DodecahedronGeometry(4, 0), glowMaterial);
+	try {
+		const coreLoaded = await gltfLoader.loadAsync(CORE_MODEL_FILE);
+		coreLoaded.scene.updateMatrixWorld(true);
+		const sourceMesh = coreLoaded.scene.getObjectByProperty('isMesh', true);
+		if (!sourceMesh?.geometry) throw new Error('No mesh geometry in antichamber core GLB');
+
+		const coreGeometry = sourceMesh.geometry.clone();
+		coreGeometry.applyMatrix4(sourceMesh.matrixWorld);
+		coreGeometry.computeBoundingBox();
+		if (coreGeometry.boundingBox) {
+			const coreSize = new THREE.Vector3();
+			coreGeometry.boundingBox.getSize(coreSize);
+			const maxDim = Math.max(coreSize.x, coreSize.y, coreSize.z, 0.001);
+			const fitScale = 12 / maxDim;
+			coreGeometry.scale(fitScale, fitScale, fitScale);
+		}
+		coreGeometry.center();
+		mesh = new THREE.Mesh(coreGeometry, glowMaterial);
+	} catch (error) {
+		console.warn('Antichamber core GLB load failed, falling back to dodecahedron.', error);
+		mesh = new THREE.Mesh(new THREE.DodecahedronGeometry(4, 0), glowMaterial);
+	}
+
 	mesh.castShadow = true;
 	mesh.receiveShadow = true;
 	scene.add(mesh);
-	mesh.position.set(0, 5, 0);
+	mesh.position.copy(meshBasePosition);
 
 	// Env map ajoutée après renderer.init() dans bootstrap()
 
@@ -1351,7 +1384,7 @@ function triggerTrack(faceIndex) {
 	}
 
 	activeFace = faceIndex;
-	setMessRNBO('next', 1);
+	setMessRNBO('index', faceIndex);
 }
 
 function initializeListeners() {
@@ -1373,7 +1406,7 @@ function subscribeToMessages() {
 	device.messageEvent.subscribe((event) => {
 		switch (event.tag) {
 			case 'env':
-				targetSizeOcto = THREE.MathUtils.mapLinear(event.payload, 0, 10, 1, 2);
+				targetSizeOcto = THREE.MathUtils.mapLinear(event.payload, 0, 10, 1.45, 2.25);
 				glowTarget = THREE.MathUtils.clamp(
 					THREE.MathUtils.mapLinear(event.payload, 0, 10, 0, 0.15),
 					0,
@@ -1420,7 +1453,7 @@ function onWindowResize() {
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
 	renderer.setSize(width, height);
-	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+	renderer.setPixelRatio(Math.min(window.devicePixelRatio, _isMobile ? MOBILE_DPR_CAP : DESKTOP_DPR_CAP));
 	cssRenderer.setSize(width, height);
 	updateCSSPanelLayout();
 
@@ -2195,10 +2228,32 @@ function animate() {
 
 	if (mesh) {
 		glowCurrent += (glowTarget - glowCurrent) * 0.15;
-		mesh.material.emissiveIntensity = glowCurrent;
-		const colorBlend = THREE.MathUtils.clamp(glowCurrent / 6, 0, 1);
-
-		mesh.material.emissive.lerpColors(_colorA, _colorB, colorBlend);
+		mesh.material.emissive.copy(_coreEmissive);
+		mesh.material.emissiveIntensity = 0.2 + glowCurrent * 0.35;
+		if (controls?.exploreMode) {
+			const meshDriftScale = _isMobile ? 0.55 : 1;
+			_meshFollowTarget.set(
+				meshBasePosition.x + Math.sin(elapsed * 0.38) * 3.6 * meshDriftScale,
+				meshBasePosition.y + Math.cos(elapsed * 0.31) * 2.1 * meshDriftScale,
+				meshBasePosition.z + Math.sin(elapsed * 0.24 + 0.8) * 2.8 * meshDriftScale
+			);
+		} else if (activePageId === 'page-accueil') {
+			_meshFollowTarget.copy(meshBasePosition);
+		} else {
+			const meshFollowScale = _isMobile ? 0.72 : 1;
+			camera.getWorldDirection(_camForward).normalize();
+			_camRight.set(1, 0, 0).applyQuaternion(camera.quaternion).normalize();
+			_camUp.set(0, 1, 0).applyQuaternion(camera.quaternion).normalize();
+			_meshFollowTarget.copy(camera.position)
+				.addScaledVector(_camForward, 16.5 * meshFollowScale)
+				.addScaledVector(_camUp, -3.1 * meshFollowScale)
+				.addScaledVector(_camRight, Math.sin(elapsed * 0.41) * 2.2 * meshFollowScale)
+				.addScaledVector(_camUp, Math.cos(elapsed * 0.33) * 1.2 * meshFollowScale);
+		}
+		mesh.position.lerp(_meshFollowTarget, 0.085);
+		mesh.rotation.x = Math.sin(elapsed * 0.63 + 0.7) * 0.55;
+		mesh.rotation.y = elapsed * 0.41 + Math.cos(elapsed * 0.29 + 1.3) * 0.35;
+		mesh.rotation.z = Math.sin(elapsed * 0.51 + 2.1) * 0.45;
 		mesh.scale.setScalar(targetSizeOcto);
 	}
 
