@@ -8,6 +8,8 @@ let trackNames = [];
 const START_TRACK_INDEX = 0; // Start on the first RNBO multibuffer entry
 let currentTrackIndex = START_TRACK_INDEX;
 let hasExplicitTrackSelection = false;
+let pendingRequestedTrackIndex = null;
+let incomingTrackIndexBase = null;
 
 // Display names override (keyed by filename without extension)
 const TRACK_DISPLAY_NAMES = {
@@ -75,6 +77,28 @@ function normalizeTrackIndex(index) {
 		return Math.max(0, rawIndex);
 	}
 
+	if (incomingTrackIndexBase === 'zero') {
+		return clampTrackIndex(rawIndex);
+	}
+
+	if (incomingTrackIndexBase === 'one') {
+		return clampTrackIndex(rawIndex - 1);
+	}
+
+	if (pendingRequestedTrackIndex !== null) {
+		if (rawIndex === pendingRequestedTrackIndex) {
+			incomingTrackIndexBase = 'zero';
+			pendingRequestedTrackIndex = null;
+			return clampTrackIndex(rawIndex);
+		}
+
+		if ((rawIndex - 1) === pendingRequestedTrackIndex) {
+			incomingTrackIndexBase = 'one';
+			pendingRequestedTrackIndex = null;
+			return clampTrackIndex(rawIndex - 1);
+		}
+	}
+
 	const candidates = [];
 	if (rawIndex >= 0 && rawIndex < trackNames.length) {
 		candidates.push(rawIndex);
@@ -89,8 +113,8 @@ function normalizeTrackIndex(index) {
 		return clampTrackIndex(rawIndex);
 	}
 
-	if (candidates.includes(currentTrackIndex)) {
-		return currentTrackIndex;
+	if (candidates.length > 1 && candidates.includes(currentTrackIndex)) {
+		return candidates.find((candidate) => candidate !== currentTrackIndex) ?? currentTrackIndex;
 	}
 
 	return candidates[0];
@@ -107,8 +131,10 @@ export function updateEnvBar(envValue) {
 }
 
 function switchToTrack(index) {
-	if (index < 0 || index >= trackNames.length) return;
+	if (index < 0) return;
+	if (trackNames.length > 0 && index >= trackNames.length) return;
 
+	pendingRequestedTrackIndex = index;
 	setMessRNBO('index', index);
 
 	// Update UI immediately
@@ -383,7 +409,7 @@ export function setTrackIndex(index) {
 
 export function jumpToStartTrack() {
 	const preferredTrackIndex = hasExplicitTrackSelection ? currentTrackIndex : START_TRACK_INDEX;
-	if (preferredTrackIndex >= 0 && preferredTrackIndex < trackNames.length) {
-		switchToTrack(preferredTrackIndex);
-	}
+	if (preferredTrackIndex < 0) return;
+	if (trackNames.length > 0 && preferredTrackIndex >= trackNames.length) return;
+	switchToTrack(preferredTrackIndex);
 }

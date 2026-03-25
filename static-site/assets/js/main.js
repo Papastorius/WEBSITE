@@ -3,7 +3,7 @@ import gsap from '../libs/gsap-core.js';
 import { GLTFLoader } from '../libs/addons/GLTFLoader.js';
 import { PageLookControls } from './page-orbit-controls.js';
 import { loadImmersiveContent } from './content-loader.js';
-import { initPlayerAssets, initPlayerUI, setTimeSeconds, setTotalSeconds, updateProgress, setTrackIndex, updateEnvBar } from './audio/rnbo-player.js';
+import { initPlayerAssets, initPlayerUI, setTimeSeconds, setTotalSeconds, updateProgress, setTrackIndex, updateEnvBar, jumpToStartTrack } from './audio/rnbo-player.js';
 import { setMessRNBO, startAudioAndLoadRNBO } from './audio/rnbo-engine.js';
 import { initVisitorData, updateAudioDisplay } from './visitor-data.js';
 import { CSS3DRenderer, CSS3DObject } from '../libs/addons/CSS3DRenderer.js';
@@ -1398,6 +1398,7 @@ function initializeListeners() {
 
 		if (device) {
 			subscribeToMessages();
+			jumpToStartTrack();
 		}
 	});
 }
